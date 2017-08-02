@@ -18,11 +18,10 @@ unset imap_passive
 
 # smtp settings (sending messages)
 set smtp_pass = 'SOME PASSWORD' # default: (empty)
-set smtp_url = smtp://OUTGOING ADDRESS:PORT # default: (empty)
+set smtp_url = smtp://$imap_user@OUTGOING ADDRESS:PORT # default: (empty)
 
-# sidebar settings
+# sidebar settings - some only in mutt-1.8.3
 set sidebar_indent_string = ' -' # default:   
-#set sidebar_format = '%B%?F? [%F]?%* %N/%S' # default: %B%*  %n
 set sidebar_format = '%B%?F? [%F]?%* %?N?%N/?%?S?%S?  ' # default: %B%* %n
 set sidebar_folder_indent = yes # default: no
 set sidebar_width = 25
@@ -35,6 +34,7 @@ set ssl_force_tls = yes # default: no
 set ssl_starttls = yes
 
 # General options...
+set editor = "vim -c 'set spell spelllang=en_gb'"
 set mail_check = 10 # default: 5
 set beep_new = yes # default: no
 set edit_headers = yes # default: no
