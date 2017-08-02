@@ -1,0 +1,80 @@
+set realname = 'FULL NAME' # default: (empty)
+set from = FULL_EMAIL@ADDRESS.COM
+set use_from = yes
+
+# Folder options
+set folder=imaps://INCOMING_SERVER:PORT/
+set spoolfile = '+Inbox' # default: (empty)
+set record = '+Sent Items/' # default: ~/sent
+set postponed = '+Drafts/' # default: ~/postponed
+
+# imap settings (receiving messages): 
+set imap_user = USER@INSTITUTIONAL.COM # default: (empty)
+#set imap_check_subscribed = yes # default: no
+mailboxes =INBOX =T2K =T2K/all =T2K/oscanal =T2K/sk =T2K/banff =Drafts ='Sent Items'
+set imap_pass = 'SOME PASSWORD' # default: (empty)
+set imap_keepalive = 300
+unset imap_passive
+
+# smtp settings (sending messages)
+set smtp_pass = 'SOME PASSWORD' # default: (empty)
+set smtp_url = smtp://OUTGOING ADDRESS:PORT # default: (empty)
+
+# sidebar settings
+set sidebar_indent_string = ' -' # default:   
+#set sidebar_format = '%B%?F? [%F]?%* %N/%S' # default: %B%*  %n
+set sidebar_format = '%B%?F? [%F]?%* %?N?%N/?%?S?%S?  ' # default: %B%* %n
+set sidebar_folder_indent = yes # default: no
+set sidebar_width = 25
+set sidebar_short_path = yes # default: no
+set sidebar_visible = yes # default: no
+set mail_check_stats = yes # default: no
+
+# ssl options
+set ssl_force_tls = yes # default: no
+set ssl_starttls = yes
+
+# General options...
+set mail_check = 10 # default: 5
+set beep_new = yes # default: no
+set edit_headers = yes # default: no
+set forward_quote = yes # default: no
+set header_cache = '~/.cache/mutt'
+set message_cachedir = '~/.mutt/cache'
+set mailcap_path 	= ~/.mutt/mailcap
+auto_view text/html
+
+# Local files
+set certificate_file = '~/.mutt/certificates' # default: ~/.mutt_certificates
+set alias_file = '~/.mutt/muttrc' # default: ~/.muttrc
+set signature = '~/.mutt/signature' # default: ~/.signature
+set history_file = '~/.mutt/mutthistory' # default: ~/.mutthistory
+
+
+# Not used yet...
+#set honor_disposition = yes # default: no
+#set force_name = yes # default: no
+#set fast_reply = yes # default: no
+#set askcc = yes # default: no
+#set use_domain = no # default: yes
+#set editor = 'vim' # default: (empty)
+
+color attachment   brightmagenta default
+color error        brightred  default
+color hdrdefault   red        default
+color indicator    black      red
+color markers      brightcyan default
+color message      brightcyan default
+color normal       default    default
+color quoted       brightblue default
+color search       default    green
+color signature    red        default
+color status       black      blue
+color tilde        magenta    default
+color tree         magenta    default
+
+
+# Key bindings:
+bind index,pager \CP sidebar-prev  # Ctrl-Shift-P - Previous Mailbox
+bind index,pager \CN sidebar-next  # Ctrl-Shift-N - Next Mailbox
+bind index,pager \CO sidebar-open  # Ctrl-Shift-O - Open Highlighted Mailbox
