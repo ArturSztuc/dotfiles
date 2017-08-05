@@ -1,27 +1,50 @@
-set realname = 'FULL NAME' # default: (empty)
+#######################################################
+#                       OWNER                         #
+#######################################################
+set realname = 'YOUR NAME' # default: (empty)
 set from = FULL_EMAIL@ADDRESS.COM
 set use_from = yes
 
-# Folder options
-set folder=imaps://INCOMING_SERVER:PORT/
+#######################################################
+#                 FOLDER OPTIONS                      #
+#######################################################
+set folder=imaps://INCOMING ADDRESS:PORT/
 set spoolfile = '+Inbox' # default: (empty)
 set record = '+Sent Items/' # default: ~/sent
 set postponed = '+Drafts/' # default: ~/postponed
 
-# imap settings (receiving messages): 
-set imap_user = USER@INSTITUTIONAL.COM # default: (empty)
-#set imap_check_subscribed = yes # default: no
+#######################################################
+#        IMAP SETTINGS (RECEIVING MESSAGES)           #
+#######################################################
+set imap_user = USER@EMAIL # default: (empty)
 mailboxes =INBOX =T2K =T2K/all =T2K/oscanal =T2K/sk =T2K/banff =Drafts ='Sent Items'
-set imap_pass = 'SOME PASSWORD' # default: (empty)
+set imap_pass = 'YOUR PASSWORD' # default: (empty)
 set imap_keepalive = 300
 unset imap_passive
 
-# smtp settings (sending messages)
-set smtp_pass = 'SOME PASSWORD' # default: (empty)
-set smtp_url = smtp://$imap_user@OUTGOING ADDRESS:PORT # default: (empty)
+#######################################################
+#         SMTP SETTINGS (SENDING MESSAGES)            #
+#######################################################
+set smtp_pass = 'YOUR PASSWORD' # default: (empty)
+set smtp_url = smtp://$imap_user@OUTGOING ADDRESS:PORT
 
-# sidebar settings - some only in mutt-1.8.3
-set sidebar_indent_string = ' -' # default:   
+#######################################################
+#                    SSL OPTIONS                      #
+#######################################################
+set ssl_force_tls = yes # default: no
+set ssl_starttls = yes
+
+#######################################################
+#                     ALIASES                         #
+#######################################################
+set display_filter = '~/.mutt/aliases.sh'
+set alias_file = '~/.mutt/aliases'
+source $alias_file
+
+#######################################################
+#                  SIDEBAR SETTINGS                   #
+#######################################################
+set sidebar_indent_string = ' -' # default:   # mutt 1.8.3 
 set sidebar_format = '%B%?F? [%F]?%* %?N?%N/?%?S?%S?  ' # default: %B%* %n
 set sidebar_folder_indent = yes # default: no
 set sidebar_width = 25
@@ -29,11 +52,9 @@ set sidebar_short_path = yes # default: no
 set sidebar_visible = yes # default: no
 set mail_check_stats = yes # default: no
 
-# ssl options
-set ssl_force_tls = yes # default: no
-set ssl_starttls = yes
-
-# General options...
+#######################################################
+#                  GENERAL OPTIONS...                 #
+#######################################################
 set editor = "vim -c 'set spell spelllang=en_gb'"
 set mail_check = 10 # default: 5
 set beep_new = yes # default: no
@@ -41,17 +62,19 @@ set edit_headers = yes # default: no
 set forward_quote = yes # default: no
 set header_cache = '~/.cache/mutt'
 set message_cachedir = '~/.mutt/cache'
-set mailcap_path 	= ~/.mutt/mailcap
+set mailcap_path 	= '~/.mutt/mailcap'
 auto_view text/html
 
-# Local files
+#######################################################
+#                    LOCAL FILES                      #
+#######################################################
 set certificate_file = '~/.mutt/certificates' # default: ~/.mutt_certificates
-set alias_file = '~/.mutt/muttrc' # default: ~/.muttrc
 set signature = '~/.mutt/signature' # default: ~/.signature
 set history_file = '~/.mutt/mutthistory' # default: ~/.mutthistory
 
-
-# Not used yet...
+#######################################################
+#                    NOT USED YET..                   #
+#######################################################
 #set honor_disposition = yes # default: no
 #set force_name = yes # default: no
 #set fast_reply = yes # default: no
@@ -59,6 +82,9 @@ set history_file = '~/.mutt/mutthistory' # default: ~/.mutthistory
 #set use_domain = no # default: yes
 #set editor = 'vim' # default: (empty)
 
+#######################################################
+#                       COLOURS                       #
+#######################################################
 color attachment   brightmagenta default
 color error        brightred  default
 color hdrdefault   red        default
@@ -73,8 +99,9 @@ color status       black      blue
 color tilde        magenta    default
 color tree         magenta    default
 
-
-# Key bindings:
+#######################################################
+#                     KEY BINDINGS                    #
+#######################################################
 bind index,pager \CP sidebar-prev  # Ctrl-Shift-P - Previous Mailbox
 bind index,pager \CN sidebar-next  # Ctrl-Shift-N - Next Mailbox
 bind index,pager \CO sidebar-open  # Ctrl-Shift-O - Open Highlighted Mailbox
