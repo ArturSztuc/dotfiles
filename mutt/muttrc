@@ -93,19 +93,20 @@ set history_file    = '~/.mutt/mutthistory'   # default: ~/.mutthistory
 #######################################################
 #                       COLOURS                       #
 #######################################################
-color attachment   brightmagenta default
-color error        brightred  default
-color hdrdefault   red        default
-color indicator    black      red
-color markers      brightcyan default
-color message      brightcyan default
-color normal       default    default
-color quoted       brightblue default
-color search       default    green
-color signature    red        default
-color status       black      blue
-color tilde        magenta    default
-color tree         magenta    default
+#color attachment   brightmagenta default
+#color error        brightred  default
+#color hdrdefault   red        default
+#color indicator    black      red
+#color markers      brightcyan default
+#color message      brightcyan default
+#color normal       default    default
+#color quoted       brightblue default
+#color search       default    green
+#color signature    red        default
+#color status       black      blue
+#color tilde        magenta    default
+#color tree         magenta    default
+source ~/.mutt/colours
 
 #######################################################
 #                     KEY BINDINGS                    #
