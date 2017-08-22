@@ -53,6 +53,15 @@ set sidebar_visible = yes # default: no
 set mail_check_stats = yes # default: no
 
 #######################################################
+#                THREADING SETTINGS                   #
+#######################################################
+set sort            = "threads"
+set strict_threads  = "yes"
+set sort_browser    = "reverse-date"
+set sort_aux        = "last-date-received"
+unset collapse_unread
+
+#######################################################
 #                  GENERAL OPTIONS...                 #
 #######################################################
 set editor = "vim -c 'set spell spelllang=en_gb'"
@@ -104,3 +113,5 @@ color tree         magenta    default
 bind index,pager \CP sidebar-prev  # Ctrl-Shift-P - Previous Mailbox
 bind index,pager \CN sidebar-next  # Ctrl-Shift-N - Next Mailbox
 bind index,pager \CO sidebar-open  # Ctrl-Shift-O - Open Highlighted Mailbox
+bind index - collapse-thread
+bind index _ collapse-all
