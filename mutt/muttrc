@@ -1,56 +1,56 @@
 #######################################################
 #                       OWNER                         #
 ######################################################
-set realname = 'YOUR NAME' # default: (empty)
-set from = FULL_EMAIL@ADDRESS.COM
-set use_from = yes
+set realname  = 'YOUR NAME'     # default: (empty)
+set from      = FULL_EMAIL@ADDRESS.COM
+set use_from  = yes
 
 #######################################################
 #                 FOLDER OPTIONS                      #
 #######################################################
-set folder=imaps://INCOMING ADDRESS:PORT/
-set spoolfile = '+Inbox' # default: (empty)
-set record = '+Sent Items/' # default: ~/sent
-set postponed = '+Drafts/' # default: ~/postponed
+set folder    = imaps://INCOMING ADDRESS:PORT/
+set spoolfile = '+Inbox'        # default: (empty)
+set record    = '+Sent Items/'  # default: ~/sent
+set postponed = '+Drafts/'      # default: ~/postponed
 
 #######################################################
 #        IMAP SETTINGS (RECEIVING MESSAGES)           #
 #######################################################
-set imap_user = USER@EMAIL # default: (empty)
-mailboxes =INBOX =T2K =T2K/all =T2K/oscanal =T2K/sk =T2K/banff =Drafts ='Sent Items'
-set imap_pass = 'YOUR PASSWORD' # default: (empty)
-set imap_keepalive = 300
+set imap_user       = USER@EMAIL      # default: (empty)
+mailboxes           = INBOX =T2K =T2K/all =T2K/oscanal =T2K/sk =T2K/banff =Drafts ='Sent Items'
+set imap_pass       = 'YOUR PASSWORD' # default: (empty)
+set imap_keepalive  = 300
 unset imap_passive
 
 #######################################################
 #         SMTP SETTINGS (SENDING MESSAGES)            #
 #######################################################
-set smtp_pass = 'YOUR PASSWORD' # default: (empty)
-set smtp_url = smtp://$imap_user@OUTGOING ADDRESS:PORT
+set smtp_pass = 'YOUR PASSWORD'     # default: (empty)
+set smtp_url  = smtp://$imap_user@OUTGOING ADDRESS:PORT
 
 #######################################################
 #                    SSL OPTIONS                      #
 #######################################################
-set ssl_force_tls = yes # default: no
-set ssl_starttls = yes
+set ssl_force_tls   = yes # default: no
+set ssl_starttls    = yes
 
 #######################################################
 #                     ALIASES                         #
 #######################################################
-set display_filter = '~/.mutt/aliases.sh'
-set alias_file = '~/.mutt/aliases'
+set display_filter  = '~/.mutt/aliases.sh'
+set alias_file      = '~/.mutt/aliases'
 source $alias_file
 
 #######################################################
 #                  SIDEBAR SETTINGS                   #
 #######################################################
-set sidebar_indent_string = ' -' # default:   # mutt 1.8.3 
-set sidebar_format = '%B%?F? [%F]?%* %?N?%N/?%?S?%S?  ' # default: %B%* %n
-set sidebar_folder_indent = yes # default: no
-set sidebar_width = 25
-set sidebar_short_path = yes # default: no
-set sidebar_visible = yes # default: no
-set mail_check_stats = yes # default: no
+set sidebar_indent_string = ' -'    # default:   # mutt 1.8.3 
+set sidebar_format        = '%B%?F? [%F]?%* %?N?%N/?%?S?%S?  ' # default: %B%* %n
+set sidebar_folder_indent = yes     # default: no
+set sidebar_width         = 25
+set sidebar_short_path    = yes     # default: no
+set sidebar_visible       = yes     # default: no
+set mail_check_stats      = yes     # default: no
 
 #######################################################
 #                THREADING SETTINGS                   #
@@ -64,31 +64,31 @@ unset collapse_unread
 #######################################################
 #                  GENERAL OPTIONS...                 #
 #######################################################
-set editor = "vim -c 'set spell spelllang=en_gb'"
-set mail_check = 10 # default: 5
-set beep_new = yes # default: no
-set edit_headers = yes # default: no
-set forward_quote = yes # default: no
-set header_cache = '~/.cache/mutt'
-set message_cachedir = '~/.mutt/cache'
-set mailcap_path 	= '~/.mutt/mailcap'
+set editor          = "vim -c 'set spell spelllang=en_gb'"
+set mail_check      = 10      # default: 5
+set beep_new        = yes     # default: no
+set edit_headers    = yes     # default: no
+set forward_quote   = yes     # default: no
+set header_cache    = '~/.cache/mutt'
+set message_cachedir= '~/.mutt/cache'
+set mailcap_path 	  = '~/.mutt/mailcap'
 auto_view text/html
 
 #######################################################
 #                    LOCAL FILES                      #
 #######################################################
-set certificate_file = '~/.mutt/certificates' # default: ~/.mutt_certificates
-set signature = '~/.mutt/signature' # default: ~/.signature
-set history_file = '~/.mutt/mutthistory' # default: ~/.mutthistory
+set certificate_file= '~/.mutt/certificates'  # default: ~/.mutt_certificates
+set signature       = '~/.mutt/signature'     # default: ~/.signature
+set history_file    = '~/.mutt/mutthistory'   # default: ~/.mutthistory
 
 #######################################################
 #                    NOT USED YET..                   #
 #######################################################
-#set honor_disposition = yes # default: no
-#set force_name = yes # default: no
-#set fast_reply = yes # default: no
-#set askcc = yes # default: no
-#set use_domain = no # default: yes
+#set honor_disposition  = yes # default: no
+#set force_name         = yes # default: no
+#set fast_reply         = yes # default: no
+#set askcc              = yes # default: no
+#set use_domain         = no # default: yes
 
 #######################################################
 #                       COLOURS                       #
