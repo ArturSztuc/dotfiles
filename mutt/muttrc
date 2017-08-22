@@ -1,6 +1,6 @@
 #######################################################
 #                       OWNER                         #
-#######################################################
+######################################################
 set realname = 'YOUR NAME' # default: (empty)
 set from = FULL_EMAIL@ADDRESS.COM
 set use_from = yes
@@ -80,7 +80,6 @@ set history_file = '~/.mutt/mutthistory' # default: ~/.mutthistory
 #set fast_reply = yes # default: no
 #set askcc = yes # default: no
 #set use_domain = no # default: yes
-#set editor = 'vim' # default: (empty)
 
 #######################################################
 #                       COLOURS                       #
