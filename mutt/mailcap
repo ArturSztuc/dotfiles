@@ -1,2 +1,24 @@
+#####################################
+#              HTML                 #
+#####################################
 text/html; w3m -I %{charset} -T text/html; copiousoutput;
-application/pdf; ~/.mutt/view_attachment.sh %s pdf
+
+#####################################
+#              PDF                  #
+#####################################
+application/pdf;          ~/.mutt/view_attachment.sh %s pdf
+
+#####################################
+#             EXCEL                 #
+#####################################
+application/ms-Excel;     ~/.mutt/view_attachment.sh %s xls 
+application/x-msexcel;    ~/.mutt/view_attachment.sh %s xls 
+application/x-excel;      ~/.mutt/view_attachment.sh %s xls 
+application/vnd.ms-excel; ~/.mutt/view_attachment.sh %s xls 
+application/msexcel;      ~/.mutt/view_attachment.sh %s xls 
+application/excel;        ~/.mutt/view_attachment.sh %s xls 
+
+#####################################
+#             UNKNOWN               #
+#####################################
+x-unknown/*;   gnome-open %s;
