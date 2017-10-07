@@ -3,10 +3,20 @@
 #####################################
 text/html; w3m -I %{charset} -T text/html; copiousoutput;
 
+
+#####################################
+#             IMAGES                #
+#####################################
+image/*;                  ~/.mutt/view_attachment.sh %s jpg
+
 #####################################
 #              PDF                  #
 #####################################
 application/pdf;          ~/.mutt/view_attachment.sh %s pdf
+application/octetstream;          ~/.mutt/view_attachment.sh %s pdf
+application/octet-stream;          ~/.mutt/view_attachment.sh %s pdf
+application/octetstrea;          ~/.mutt/view_attachment.sh %s pdf
+
 
 #####################################
 #             EXCEL                 #
@@ -19,6 +29,11 @@ application/msexcel;      ~/.mutt/view_attachment.sh %s xls
 application/excel;        ~/.mutt/view_attachment.sh %s xls 
 
 #####################################
+#             MSWORD                #
+#####################################
+application/msword;       ~/.mutt/view_attachment.sh %s doc
+#####################################
 #             UNKNOWN               #
 #####################################
 x-unknown/*;   gnome-open %s;
+
