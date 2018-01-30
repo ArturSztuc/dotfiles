@@ -47,13 +47,9 @@ theme.border_marked = "#999999"
 --theme.taglist_bg_focus = "#ff0000"
 
 -- Generate taglist squares:
-local taglist_square_size = dpi(4)
-theme.taglist_squares_sel = theme_assets.taglist_squares_sel(
-    taglist_square_size, theme.fg_normal
-)
-theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(
-    taglist_square_size, theme.fg_normal
-)
+local taglist_square_size = dpi(1)
+theme.taglist_squares_sel = "~/.config/awesome/icons/bar2.png"
+theme.taglist_squares_unsel = "~/.config/awesome/icons/bar2.png"
 
 -- Variables set for theming notifications:
 -- notification_font
@@ -100,8 +96,8 @@ theme.titlebar_maximized_button_focus_inactive  = themes_path.."default/titlebar
 theme.titlebar_maximized_button_normal_active = themes_path.."default/titlebar/maximized_normal_active.png"
 theme.titlebar_maximized_button_focus_active  = themes_path.."default/titlebar/maximized_focus_active.png"
 
---theme.wallpaper = themes_path.."default/background.png"
-theme.wallpaper = "/home/as16/Pictures/iceland-high-definition-wallpaper_02051053_163.jpg"
+-- Wallpaper
+theme.wallpaper = "~/.config/awesome/wallpapers/rock-ocean-wallpaper-HD.jpg"
 
 -- You can use your own layout icons like this:
 theme.layout_fairh = themes_path.."default/layouts/fairhw.png"
@@ -121,11 +117,11 @@ theme.layout_cornerne = themes_path.."default/layouts/cornernew.png"
 theme.layout_cornersw = themes_path.."default/layouts/cornersww.png"
 theme.layout_cornerse = themes_path.."default/layouts/cornersew.png"
 
--- Generate Awesome icon:
-theme.awesome_icon = "/home/as16/Pictures/logo/logo3.png"
---theme.awesome_icon = theme_assets.awesome_icon(
---    theme.menu_height, theme.bg_focus, theme.fg_focus
---)
+-- Custom list of icons corresponding to installed software etc.
+theme.google="~/.config/awesome/icons/google-chrome.png"
+
+-- Replaces the Awesome icon with purple gentoo...
+theme.awesome_icon = "~/.config/awesome/icons/gentoo_01.svg"
 
 -- Define the icon theme for application icons. If not set then the icons
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
