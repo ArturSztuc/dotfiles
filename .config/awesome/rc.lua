@@ -2,25 +2,36 @@
 local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
+
 -- Widget and layout library
 local wibox = require("wibox")
+
 -- Theme handling library
 local beautiful = require("beautiful")
+
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 
--- Expanded layouts library (GAPS!!)
-local lain = require("lain")
-
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+-- Custom Awesome WM Widgets
+local volume_widget = require('widgets/volume')
+local volumebar_widget = require('widgets/volumebar')
+local battery_widget  = require('widgets/battery')
+local brightness_widget  = require('widgets/brightness')
+local mic_widget  = require('widgets/mic')
+local micbar_widget  = require('widgets/micbar')
+require('widgets/spotify')
+
+awful.spawn.with_shell(". ~/.config/awesome/autorun.sh")
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
+-- FLAG > Check where the fallback config is and update it to something more managable...
 if awesome.startup_errors then
     naughty.notify({ preset = naughty.config.presets.critical,
                      title = "Oops, there were errors during startup!",
@@ -45,7 +56,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init("/home/as16/.config/awesome/theme.lua")
+beautiful.init("~/.config/awesome/theme.lua")
 --beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
@@ -62,22 +73,9 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
---    awful.layout.suit.floating,
---    awful.layout.suit.tile,
---    awful.layout.suit.tile.left,
---    awful.layout.suit.tile.bottom,
---    awful.layout.suit.tile.top,
-    awful.layout.suit.fair,
-    awful.layout.suit.fair.horizontal,
---    awful.layout.suit.spiral,
---    awful.layout.suit.spiral.dwindle,
---    awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
---    awful.layout.suit.magnifier,
---    awful.layout.suit.corner.nw,
-    -- awful.layout.suit.corner.ne,
-    -- awful.layout.suit.corner.sw,
-    -- awful.layout.suit.corner.se,
+    awful.layout.suit.fair,             -- Great for 2-4 windows
+    awful.layout.suit.fair.horizontal,  -- Great for 6 windows
+    awful.layout.suit.max.fullscreen,   -- Great for 1 window, eg. google-chrome
 }
 -- }}}
 
@@ -107,7 +105,8 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal }
+                                    { "konsole", terminal },
+                                    { "chrome", "google-chrome-stable", beautiful.google}
                                   }
                         })
 
@@ -117,9 +116,6 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
-
--- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibar
 -- Create a textclock widget
@@ -188,11 +184,47 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    -- awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
-    local names = {"[1: main]", "[2: www]", "[3: chat]", "[4: media]", "[5: spare]", "[6: spare]", "[7: spare]", "[8: spare]", "[9: spotify]"}
     local l = awful.layout.suit -- Just to save us some typing, use an alias
-    local layouts = {l.fair, l.fair, l.fair, l.fair, l.fair, l.fair, l.fair, l.fair, l.fair}
-    awful.tag(names, s, layouts)
+
+    awful.tag.add("home",{
+      --icon      = beautiful.home,
+      init      = true,
+      layout    = l.fair,
+      selected  = true,
+      screen=s})
+    awful.tag.add("internet",{
+      --icon=beautiful.www,
+      layout = l.max.fullscreen,
+      exec_once = {"konsole"},
+      screen=s})
+    awful.tag.add("mail",{
+      --icon=beautiful.mail,
+      layout = l.fair,
+      screen=s})
+    awful.tag.add("chat",{
+      --icon=beautiful.chat,
+      layout = l.fair,
+      screen=s})
+    awful.tag.add("media",{
+      --icon=beautiful.media,
+      layout = l.fair,
+      screen=s})
+    awful.tag.add("work",{
+      --icon=beautiful.term,
+      layout = l.fair,
+      screen=s})
+    awful.tag.add("work",{
+      --icon=beautiful.term,
+      layout = l.fair,
+      screen=s})
+    awful.tag.add("work",{
+      --icon=beautiful.term,
+      layout = l.fair,
+      screen=s})
+    awful.tag.add("spotify",{
+      --icon=beautiful.spotify,
+      layout = l.fair,
+      screen=s})
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -208,10 +240,20 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
 
     -- Create a tasklist widget
+ --   s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s })
+    s.mywibox = awful.wibar({ position = "top", screen = s ,height=22, ontop=false}
+    )
+
+    -- Separators and gaps to put into wibox (separate widgets)
+    sprtr = wibox.widget.textbox()
+    sprtr:set_text(" : ")
+    sprtr2 = wibox.widget.textbox()
+    sprtr2:set_text(" || ")
+    gap = wibox.widget.textbox()
+    gap:set_text(" ")
 
     -- Add widgets to the wibox
     s.mywibox:setup {
@@ -219,18 +261,35 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
             mylauncher,
+            sprtr2,
             s.mytaglist,
+            sprtr2,
             s.mypromptbox,
         },
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
+            sprtr,
+            spotify_widget,
+            sprtr,
+            mic_widget, gap, gap,
+            micbar_widget,
+            sprtr,
+            volume_widget, gap, gap,
+            volumebar_widget,
+            sprtr,
+            brightness_widget,
+            sprtr,
+            gap,
+            battery_widget, gap,
+            sprtr,
             wibox.widget.systray(),
+            sprtr,
             mytextclock,
+            sprtr,
             s.mylayoutbox,
         },
-    }
+  }
 end)
 -- }}}
 
@@ -340,7 +399,65 @@ globalkeys = gears.table.join(
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+              {description = "show the menubar", group = "launcher"}),
+
+    -- Custom key bindings
+    --    Lock screen
+    awful.key({ modkey,        }, "l",
+        function () awful.spawn("xscreensaver-command -lock") end,
+        {description = "lock awesome session", group = "custom"}),
+
+    --    Up the volume
+    awful.key({}, "XF86AudioLowerVolume", function ()
+      awful.util.spawn("amixer -q -D pulse sset Master 5%-", false) end,
+      {description = "increase the volume", group = "custom"}),
+
+    --    Down the volume
+    awful.key({}, "XF86AudioRaiseVolume", function ()
+      awful.util.spawn("amixer -q -D pulse sset Master 5%+", false) end,
+      {description = "decrease the volume", group = "custom"}),
+
+    --    Mute  FLAG : not working yet, either issue with spawn or with key itself?
+    awful.key({}, "XF86AudioMute", function ()
+      awful.util.spawn("amixer -D pulse set Master 1+ toggle", false)
+      awful.util.spawn("amixer -D pulse sset Mater toggle", false) 
+    end),
+
+    --    Play song  FLAG : Not working yet, 
+    --    I don't actually have this button on my laptop :(
+    --    Needs different key binding.
+--    awful.key({modkey, "Alt"}, "n<", function()
+--      awful.util.spawn("playerctl play-pause", false)
+--    end),
+
+    --    Next song
+    awful.key({modkey, "Control"}, "#", function()
+      awful.util.spawn("playerctl next", false)
+    end),
+
+    --    Previous song
+    awful.key({modkey, "Control"}, ";", function()
+      awful.util.spawn("playerctl previous", false)
+    end),
+
+    --    Scroll song forward
+    awful.key({modkey, "Control"}, "]", function()
+      awful.util.spawn("playerctl position 5 +", false)
+    end),
+
+    --    Scroll song backwards
+    awful.key({modkey, "Control"}, "[", function()
+      awful.util.spawn("playerctl position 5 -", false)
+    end),
+
+    --    Pause/Start song
+    awful.key({modkey, "Control"}, "'", function()
+      awful.util.spawn("playerctl play-pause", false)
+    end),
+
+    --    Icrease & Decrease the screen brightness (requires xbacklight)
+    awful.key({}, "XF86MonBrightnessUp", function () awful.spawn("xbacklight -inc 5") end, {description = "increase brightness", group = "custom"}),
+    awful.key({}, "XF86MonBrightnessDown", function () awful.spawn("xbacklight -dec 5") end, {description = "decrease brightness", group = "custom"})
 )
 
 clientkeys = gears.table.join(
@@ -452,7 +569,7 @@ awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
       properties = {  border_width = beautiful.border_width,
-                     -- border_width = 0,
+                      border_width = 0,
                      border_color = beautiful.border_normal,
                      focus = awful.client.focus.filter,
                      raise = true,
@@ -496,7 +613,13 @@ awful.rules.rules = {
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
+--    --   properties = { screen = 1, tag = "2" } },
+    { rule = { instance = "google-chrome-stable"},
+      properties = {tag = "internet"}
+    },
+--  { rule = { class = "gimp" },
+--    properties = { floating = true } 
+ -- },
 }
 -- }}}
 
@@ -517,24 +640,10 @@ end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
+    
     -- buttons for the titlebar
-    local buttons = gears.table.join(
-        awful.button({ }, 1, function()
-            client.focus = c
-            c:raise()
-            awful.mouse.client.move(c)
-        end),
-        awful.button({ }, 3, function()
-            client.focus = c
-            c:raise()
-            awful.mouse.client.resize(c)
-        end)
-    )
-
     awful.titlebar(c) : setup {
         { -- Left
-            awful.titlebar.widget.iconwidget(c),
-            buttons = buttons,
             layout  = wibox.layout.fixed.horizontal
         },
         { -- Middle
@@ -542,15 +651,9 @@ client.connect_signal("request::titlebars", function(c)
                 align  = "center",
                 widget = awful.titlebar.widget.titlewidget(c)
             },
-            buttons = buttons,
             layout  = wibox.layout.flex.horizontal
         },
         { -- Right
-            awful.titlebar.widget.floatingbutton (c),
-            awful.titlebar.widget.maximizedbutton(c),
-            awful.titlebar.widget.stickybutton   (c),
-            awful.titlebar.widget.ontopbutton    (c),
-            awful.titlebar.widget.closebutton    (c),
             layout = wibox.layout.fixed.horizontal()
         },
         layout = wibox.layout.align.horizontal
