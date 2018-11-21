@@ -1,0 +1,48 @@
+#vim filetype=muttrc
+#######################################################
+#                   BASIC COLOURS                     #
+#######################################################
+color attachment    white           default         
+color error         red             default         
+color hdrdefault    red             default
+color indicator     brightblack     yellow          
+color markers       red             white           
+color message       cyan            default         
+color normal        brightyellow    default         
+color quoted        brightblue      default
+color search        default         green
+color signature     red             default
+color status        brightyellow    black           
+color tilde         black           default         
+color tree          yellow          default 
+
+#######################################################
+#                   INDEX COLOURS                     #
+#######################################################
+color index         red            default         "~U"         # unread messages
+color index         red            default         "~U~$"       # unread, unreferenced messages
+color index         red            default         "~U~p!~F"    # unread messages to me
+color index         white           red             "~D"        # deleted messages
+
+#######################################################
+#                  HEADER COLOURS                     #
+#######################################################
+color hdrdefault    brightcyan     default         
+color header        brightred      default         "^(From)"
+color header        brightred      default         "^(To)"
+color header        brightred      default         "^(Subject)"
+
+#######################################################
+#                   BODY COLOURS                      #
+#######################################################
+color quoted        blue            default         
+color quoted1       cyan            default         
+color signature     brightcyan      default         
+color bold          white           default         
+color underline     white           default         
+color normal        default         default         
+color body          brightgreen     default         "[;:][-o][)/(|]"    # emoticons
+color body          brightgreen     default         "[;:][)(|]"         # emoticons
+color body          brightgreen     default         "[*]?((N)?ACK|CU|LOL|SCNR|BRB|BTW|CWYL|\
+                                                     |FWIW|vbg|GD&R|HTH|HTHBE|IMHO|IMNSHO|\
+                                                     |IRL|RTFM|ROTFL|ROFL|YMMV)[*]?"
