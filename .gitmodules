@@ -19,3 +19,6 @@
 [submodule "vim/indent/vim-tex-indent"]
   path = vim/indent/vim-tex-indent
   url = https://github.com/chrisbra/vim-tex-indent.git
+[submodule "vim/bundle/toggle-bool"]
+	path = vim/bundle/toggle-bool
+	url = https://github.com/sagarrakshe/toggle-bool.git

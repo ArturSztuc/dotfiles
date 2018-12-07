@@ -19,6 +19,7 @@ Plugin 'The-NERD-tree'
 Plugin 'junegunn/goyo.vim'
 " Plugin 'Lokaltog/powerline'
 Plugin 'itchyny/lightline.vim'
+Bundle 'https://github.com/sagarrakshe/toggle-bool'
 set laststatus=2
 let g:lightline = {
       \ 'colorscheme': 'solarized',
@@ -161,6 +162,7 @@ nnoremap <leader>tn :tabnext<CR>
 nnoremap <leader>tp :tabprevious<CR>
 " }}}
 
+noremap <leader>r :ToggleBool<CR>
 set runtimepath += "~/.vim/ibus.vim"
 set modeline
 set modelines=1
