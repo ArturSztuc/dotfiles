@@ -14,6 +14,9 @@ local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 
+-- Expanded layouts library (GAPS!!)
+-- local lain = require("lain")
+
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
@@ -21,7 +24,7 @@ require("awful.hotkeys_popup.keys")
 -- Custom Awesome WM Widgets
 local volume_widget = require('widgets/volume')
 local volumebar_widget = require('widgets/volumebar')
-local battery_widget  = require('widgets/battery')
+ local battery_widget  = require('widgets/battery') -- FLAG
 local brightness_widget  = require('widgets/brightness')
 local mic_widget  = require('widgets/mic')
 local micbar_widget  = require('widgets/micbar')
@@ -56,11 +59,13 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init("~/.config/awesome/theme.lua")
+--beautiful.init("~/.config/awesome/themes/solarized/theme.lua")
+beautiful.init("~/.config/awesome/themes/papyrus/theme.lua")
 --beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "konsole"
+--terminal = "mate-terminal"
+terminal = "/home/artur/.terminal.sh"
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -73,9 +78,22 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
+    awful.layout.suit.floating,
+--    awful.layout.suit.tile,
+--    awful.layout.suit.tile.left,
+--    awful.layout.suit.tile.bottom,
+--    awful.layout.suit.tile.top,
     awful.layout.suit.fair,             -- Great for 2-4 windows
     awful.layout.suit.fair.horizontal,  -- Great for 6 windows
-    awful.layout.suit.max.fullscreen,   -- Great for 1 window, eg. google-chrome
+--    awful.layout.suit.spiral,
+--    awful.layout.suit.spiral.dwindle,
+    awful.layout.suit.max,
+--    awful.layout.suit.max.fullscreen,   -- Great for 1 window, eg. google-chrome
+--    awful.layout.suit.magnifier,
+--    awful.layout.suit.corner.nw,
+--    awful.layout.suit.corner.ne,
+--    awful.layout.suit.corner.sw,
+--    awful.layout.suit.corner.se,
 }
 -- }}}
 
@@ -104,9 +122,11 @@ myawesomemenu = {
    { "quit", function() awesome.quit() end}
 }
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "konsole", terminal },
-                                    { "chrome", "google-chrome-stable", beautiful.google}
+-- Don't need a mouse, don't need a menu!
+mymainmenu = awful.menu({ items = { --{ "awesome", myawesomemenu, beautiful.awesome_icon },
+                                    --{ "mate-terminal", terminal },
+                                    --{ "chrome", "google-chrome-stable", beautiful.google}
+                                  --  { "chrome", "google-chrome-stable"}
                                   }
                         })
 
@@ -116,6 +136,21 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
+
+-- Keyboard map indicator and switcher
+kbdcfg = {}
+kbdcfg.cmd = "setxkbmap"
+kbdcfg.layout = { { "us", "" }, { "gb", "" } }
+kbdcfg.current = 2  -- de is our default layout
+kbdcfg.widget = wibox.widget.textbox()
+kbdcfg.widget:set_text(" " .. kbdcfg.layout[kbdcfg.current][1] .. " ")
+kbdcfg.switch = function ()
+  kbdcfg.current = kbdcfg.current % #(kbdcfg.layout) + 1
+  local t = kbdcfg.layout[kbdcfg.current]
+  kbdcfg.widget:set_text(" " .. t[1] .. " ")
+  os.execute( kbdcfg.cmd .. " " .. t[1] .. " " .. t[2] )
+end
+
 
 -- {{{ Wibar
 -- Create a textclock widget
@@ -179,6 +214,55 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
+local function powerline_add(self, ...)
+    local colors,new_widgets, dir, count = self.colors or {
+      "#3e2d1e",
+      "#412900",
+    }, {...}, self.direction or "right", #self.children/2
+    local ridx    = (dir=="right" and 1 or -1)
+
+    if self.children[count] then self.children[count]:emit_signal("widget::redraw_needed") end
+
+    for i=1, #new_widgets do
+        local color = gears.color(colors[(count%#colors) + 1])
+        local nextc = gears.color(colors[((count+ridx)%#colors) + 1])
+
+        local separator = wibox.widget {
+            fit = function(self,c,w,h) return h/2,h end,
+            draw = function(sep, context, cr, w,h)
+                local children = self:get_children()
+                local is_edge = (ridx==1 and children[#children] == sep) or
+                    (ridx==-1 and sep==children[1])
+
+                if not is_edge then
+                    cr:set_source(nextc)
+                    cr:paint()
+                end
+                local begx = dir == "right" and 0 or w
+                cr:move_to(begx,0)
+                cr:line_to(begx==0 and w or 0,h/2)
+                cr:line_to(begx, h)
+                cr:close_path()
+                cr:set_source(color)
+                cr:fill()
+            end,
+            widget = wibox.widget.base.make_widget
+        }
+
+        if dir == "left"  then self:real_add(separator) end
+        self:real_add(wibox.container.background(new_widgets[i],color))
+        if dir == "right" then self:real_add(separator) end
+        count = count + 1
+    end
+end
+
+local function powerline_layout()
+    local l = wibox.layout.fixed.horizontal()
+    rawset(l, "real_add", l.add        )
+    rawset(l, "add"     , powerline_add)
+    return l
+end
+
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
@@ -186,43 +270,125 @@ awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
     local l = awful.layout.suit -- Just to save us some typing, use an alias
 
-    awful.tag.add("home",{
-      --icon      = beautiful.home,
+--    awful.tag.add("home",{  -- one 一
+--      --icon      = beautiful.home,
+--      init      = true,
+--      layout    = l.fair,
+--      selected  = true,
+--      screen=s})
+--    awful.tag.add("internet",{-- 二
+--      --icon=beautiful.www,
+--      layout = l.max.fullscreen,
+--      exec_once = {"mate-terminal"},
+--      screen=s})
+--    awful.tag.add("mail",{-- 三
+--      --icon=beautiful.mail,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("chat",{-- 四
+--      --icon=beautiful.chat,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("media",{-- 五
+--      --icon=beautiful.media,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("work",{-- 六
+--      --icon=beautiful.term,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("work",{-- 七
+--      --icon=beautiful.term,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("work",{ -- 九
+--      --icon=beautiful.term,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("spotify",{ -- 九
+--      --icon=beautiful.spotify,
+--      layout = l.fair,
+--      screen=s})
+
+--    awful.tag.add("一",{  -- one 一
+--      --icon      = beautiful.home,
+--      init      = true,
+--      layout    = l.fair,
+--      selected  = true,
+--      screen=s})
+--    awful.tag.add("二",{-- 二
+--      --icon=beautiful.www,
+--      layout = l.max.fullscreen,
+--      exec_once = {"mate-terminal"},
+--      screen=s})
+--    awful.tag.add("三",{-- 三
+--      --icon=beautiful.mail,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("四",{-- 四
+--      --icon=beautiful.chat,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("五",{-- 五
+--      --icon=beautiful.media,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("六",{-- 六
+--      --icon=beautiful.term,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("七",{-- 七
+--      --icon=beautiful.term,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("八",{ -- 九
+--      --icon=beautiful.term,
+--      layout = l.fair,
+--      screen=s})
+--    awful.tag.add("九",{ -- 九
+--      --icon=beautiful.spotify,
+--      layout = l.fair,
+--      screen=s})
+
+
+
+    awful.tag.add("",{  -- one 一
+      icon      = beautiful.kanji1,
       init      = true,
       layout    = l.fair,
       selected  = true,
       screen=s})
-    awful.tag.add("internet",{
-      --icon=beautiful.www,
+    awful.tag.add("",{-- 二
+      icon      = beautiful.kanji2,
       layout = l.max.fullscreen,
-      exec_once = {"konsole"},
+      exec_once = {"mate-terminal"},
       screen=s})
-    awful.tag.add("mail",{
-      --icon=beautiful.mail,
+    awful.tag.add("",{-- 三
+      icon      = beautiful.kanji3,
       layout = l.fair,
       screen=s})
-    awful.tag.add("chat",{
-      --icon=beautiful.chat,
+    awful.tag.add("",{-- 四
+      icon      = beautiful.kanji4,
       layout = l.fair,
       screen=s})
-    awful.tag.add("media",{
-      --icon=beautiful.media,
+    awful.tag.add("",{-- 五
+      icon      = beautiful.kanji5,
       layout = l.fair,
       screen=s})
-    awful.tag.add("work",{
-      --icon=beautiful.term,
+    awful.tag.add("",{-- 六
+      icon      = beautiful.kanji6,
       layout = l.fair,
       screen=s})
-    awful.tag.add("work",{
-      --icon=beautiful.term,
+    awful.tag.add("",{-- 七
+      icon      = beautiful.kanji7,
       layout = l.fair,
       screen=s})
-    awful.tag.add("work",{
-      --icon=beautiful.term,
+    awful.tag.add("",{ -- 九
+      icon      = beautiful.kanji8,
       layout = l.fair,
       screen=s})
-    awful.tag.add("spotify",{
-      --icon=beautiful.spotify,
+    awful.tag.add("",{ -- 九
+      icon      = beautiful.kanji9,
       layout = l.fair,
       screen=s})
 
@@ -238,10 +404,30 @@ awful.screen.connect_for_each_screen(function(s)
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
+--    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons, nil, nil, powerline_layout())
+    --  spacing = 15,
+    --  shape function(cr, width, height)
+    --    gears.shape.powerline (cr, width, height, -10)
+    --  end
+    --})
+--    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, awful.util.taglist_buttons, {
+--      spacing = 0,
+--      shape = function(cr, width, height)
+--        gears.shape.powerline (cr, width, height, -4)
+--      end
+--    })
 
     -- Create a tasklist widget
  --   s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
+--    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, awful.util.tasklist_buttons, {
+--      spacing = 0,
+--      shape = function(cr, width, height)
+--        --gears.shape.powerline (cr, width, height, -10)
+--        gears.shape.powerline (cr, width, height, -4)
+--      end
+--    })
+
 
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s ,height=22, ontop=false}
@@ -252,16 +438,17 @@ awful.screen.connect_for_each_screen(function(s)
     sprtr:set_text(" : ")
     sprtr2 = wibox.widget.textbox()
     sprtr2:set_text(" || ")
-    gap = wibox.widget.textbox()
-    gap:set_text(" ")
+
+    gapp = wibox.widget.textbox()
+    gapp:set_text(" ")
 
     -- Add widgets to the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
-            mylauncher,
-            sprtr2,
+      --      mylauncher,
+      --      sprtr2,
             s.mytaglist,
             sprtr2,
             s.mypromptbox,
@@ -269,26 +456,49 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            sprtr,
+            --layout = wibox.layout.flex.horizontal,
+--            sprtr,
+--            spotify_widget,
+--            sprtr,
+--            mic_widget, gapp, gapp,
+--            micbar_widget,
+--            sprtr,
+--            volume_widget, gapp, gapp,
+--            volumebar_widget,
+--            sprtr,
+--            brightness_widget,
+--            sprtr,
+--            gapp,
+--            battery_widget, gapp, --gapp, -- FLAG 
+--            sprtr,
+--            wibox.widget.systray(),
+--            sprtr,
+--            mytextclock,
+--            sprtr,
+--            s.mylayoutbox,
             spotify_widget,
-            sprtr,
-            mic_widget, gap, gap,
+            mic_widget,
+            spacing_widget,
             micbar_widget,
-            sprtr,
-            volume_widget, gap, gap,
+            spacing_widget,
+            volume_widget,
+            spacing_widget,
             volumebar_widget,
-            sprtr,
+            spacing_widget,
             brightness_widget,
-            sprtr,
-            gap,
-            battery_widget, gap,
-            sprtr,
+            spacing_widget,
+            battery_widget,
+            spacing_widget,
             wibox.widget.systray(),
-            sprtr,
+            spacing_widget,
             mytextclock,
-            sprtr,
+            spacing_widget,
             s.mylayoutbox,
         },
+--    },
+--    bottom = 4, -- don't forget to increase wibar height
+--    color = "#80aa80",
+--    widget = wibox.container.margin,
   }
 end)
 -- }}}
@@ -324,8 +534,8 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
-              {description = "show main menu", group = "awesome"}),
+--    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
+--              {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
@@ -425,7 +635,7 @@ globalkeys = gears.table.join(
 
     --    Play song  FLAG : Not working yet, 
     --    I don't actually have this button on my laptop :(
-    --    Needs different key binding.
+    --    Need different key binding.
 --    awful.key({modkey, "Alt"}, "n<", function()
 --      awful.util.spawn("playerctl play-pause", false)
 --    end),
@@ -457,7 +667,15 @@ globalkeys = gears.table.join(
 
     --    Icrease & Decrease the screen brightness (requires xbacklight)
     awful.key({}, "XF86MonBrightnessUp", function () awful.spawn("xbacklight -inc 5") end, {description = "increase brightness", group = "custom"}),
-    awful.key({}, "XF86MonBrightnessDown", function () awful.spawn("xbacklight -dec 5") end, {description = "decrease brightness", group = "custom"})
+    awful.key({}, "XF86MonBrightnessDown", function () awful.spawn("xbacklight -dec 5") end, {description = "decrease brightness", group = "custom"}),
+    
+    awful.key({modkey}, "w", function()
+      for s in screen do
+        s.mywibox.visible = not s.mywibox.visible
+      end
+    end,
+    {description = "toggle wibox", group = "custom"})
+        
 )
 
 clientkeys = gears.table.join(
@@ -569,7 +787,7 @@ awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
       properties = {  border_width = beautiful.border_width,
-                      border_width = 0,
+                   --   border_width = 0,
                      border_color = beautiful.border_normal,
                      focus = awful.client.focus.filter,
                      raise = true,
