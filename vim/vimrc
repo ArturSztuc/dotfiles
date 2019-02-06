@@ -14,25 +14,64 @@ let g:ycm_confirm_extra_conf = 0
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
+" Autocomplete, works with C++
 Plugin 'Valloric/YouCompleteMe'
+
+" Nerd tree, CTRL+n 
 Plugin 'The-NERD-tree'
+
+" Shows marks, mapped to F6 F7
+" DoShowMarks! DoShowMarks NoShowMarks(!)
+Plugin 'jacquesbh/vim-showmarks'
+
+" No distractions, just text!
+" Just do :Goyo, :Goyo 120/80%/x120/x60%
 Plugin 'junegunn/goyo.vim'
-" Plugin 'Lokaltog/powerline'
+
+" Awesome status bar at the bottom
 Plugin 'itchyny/lightline.vim'
+
+" Colourschemes!
+"Plugin 'Nequo/vim-allomancer' " Doesn't support 256 col yet!
+"Plugin 'morhetz/gruvbox'      " Issue with white (it's yellow?)
+"Plugin 'NLKNguyen/papercolor-theme'
+"Plugin 'nightsense/snow'
+
+" Toggles booleans, binary etc.
+" <leader>r
 Bundle 'https://github.com/sagarrakshe/toggle-bool'
+
+" Otherwise status bar doesn't display
 set laststatus=2
+" No more -- INSERT -- etc. since we have a status bar
+set noshowmode
+"set background=light
 let g:lightline = {
       \ 'colorscheme': 'solarized',
       \ }
 
-"
+"      \ 'colorscheme': 'solarized',
 " End configuration, makes the plugins available
 call vundle#end()
 filetype plugin indent on
+"let g:gruvbox_termcolors=16
 
+" YouCompleteMe mods!
 map <C-]> :YcmCompleter GoToImprecise<CR>
+" Go to definition
+map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+" close autocomplete window after use
+let g:ycm_autoclose_preview_window_after_completion=1
+
+" NerdTree mods
 map <C-n> :NERDTreeToggle<CR>
+let NERDTreeIgnore=['\.pyc$', '\.so$', '\.o$', '\~$'] "ignore files in NERDTree
 " autocmd vimenter *  NERDTree
+
+" vim-showmarks mods
+nnoremap <F6> :DoShowMarks!<CR>
+nnoremap <F7> :NoShowMarks!<CR>
+
 " }}}
 " LEADER SHORTCUTS {{{
 let mapleader=","       "Coma is the leader!
@@ -43,9 +82,21 @@ set tabstop=2           "Spaces per tab
 set shiftwidth=2        "Spaces
 set softtabstop=2       "Spaces in tab when editing
 set expandtab           "Tabs ARE spaces
+set tw=80               "Number of characters/line
+set splitbelow splitright " Split screen in an intuitive way
+
 syntax on
 colorscheme solarized 
-call togglebg#map("<F5>")
+" Solarized colorscheme basically takes colours from the terminal, so you 
+" really need solarized terminal for this to work. I made my own "Papyrus"
+" terminal color scheme, which is pulled into vim from terminal by "solarized"
+"colorscheme papyrus
+
+" Switch from light to dark
+map <F5> :call SwithBackground()<CR>
+"call togglebg#map("<F5>")
+"map <F5> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
+"map <F5> :function Lightline_update
 "colorscheme phd
 " }}}
 " UI CONFIG {{{
@@ -85,12 +136,12 @@ nnoremap <silent> <leader><cr> :noh<CR>
 " }}}
 " FOLDING {{{
 set foldenable          " enable folding
-set foldlevelstart=10   " open most folds by defaulti
+set foldlevelstart=10   " open most folds by default
 set foldnestmax=10      " 10 nested fold max
 set foldlevel=0
 " space open/closes folds
 nnoremap <space> za
-set foldmethod=indent   " fold based on indent leveli
+set foldmethod=indent   " fold based on indent level
 " }}}
 " HIGHLIGHTS LAST INSERTED TEXT {{{
 nnoremap gV `[v`]
@@ -111,6 +162,12 @@ nnoremap <Left>   :echoe "Use h"<CR>
 nnoremap <Right>  :echoe "Use l"<CR>
 nnoremap <Up>     :echoe "Use k"<CR>
 nnoremap <Down>   :echoe "Use j"<CR>
+
+" Move to new screen by control + hjkl
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
 " Toggle between relative number & absolute number mode
 nnoremap <silent> <leader>nb :set relativenumber!<CR>
@@ -166,4 +223,42 @@ noremap <leader>r :ToggleBool<CR>
 set runtimepath += "~/.vim/ibus.vim"
 set modeline
 set modelines=1
+
+call SwithBackground()
+call SwithBackground()
+" A functions that toggles vim + lightline
+" colourscheme for solarized
+function SwithBackground()
+  if &l:background == "dark"
+    set background=light
+  else
+    set background=dark
+  endif
+  call Lightline_update() 
+endfunction
+
+" Updates the lightine bar colour depending on 
+" dark/light colourscheme of vim. Only works for
+" solarized for now...
+function! Lightline_update()
+        if !exists('g:loaded_lightline')
+                return
+        endif
+        try
+                if g:colors_name =~# 'solarized'
+                        runtime autoload/lightline/colorscheme/solarized.vim
+                        call lightline#init()
+                        call lightline#colorscheme()
+                        call lightline#update()
+                endif
+                if g:colors_name =~# 'PaperColor'
+                        runtime autoload/lightline/colorscheme/PaperColor.vim
+                        call lightline#init()
+                        call lightline#colorscheme()
+                        call lightline#update()
+                endif
+        catch
+        endtry
+endfunction
+
 " vim:set foldmethod=marker foldlevel=0:
