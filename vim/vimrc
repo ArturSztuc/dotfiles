@@ -31,6 +31,9 @@ Plugin 'junegunn/goyo.vim'
 " Awesome status bar at the bottom
 Plugin 'itchyny/lightline.vim'
 
+" Read git branch
+Plugin 'itchyny/vim-gitbranch'
+
 " Colourschemes!
 "Plugin 'Nequo/vim-allomancer' " Doesn't support 256 col yet!
 "Plugin 'morhetz/gruvbox'      " Issue with white (it's yellow?)
@@ -48,13 +51,20 @@ set noshowmode
 "set background=light
 let g:lightline = {
       \ 'colorscheme': 'solarized',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified'] ],
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ],
+      \              [ 'fileformat', 'fileencoding', 'filetype', 'charvaluehex' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'gitbranch#name'
+      \ },
       \ }
-
-"      \ 'colorscheme': 'solarized',
 " End configuration, makes the plugins available
 call vundle#end()
 filetype plugin indent on
-"let g:gruvbox_termcolors=16
 
 " YouCompleteMe mods!
 map <C-]> :YcmCompleter GoToImprecise<CR>
@@ -78,10 +88,12 @@ let mapleader=","       "Coma is the leader!
 " }}}
 " SPACES, TABS, COLOURS {{{
 syntax enable           "Syntax processing
+
 set tabstop=2           "Spaces per tab
 set shiftwidth=2        "Spaces
 set softtabstop=2       "Spaces in tab when editing
 set expandtab           "Tabs ARE spaces
+
 set tw=80               "Number of characters/line
 set splitbelow splitright " Split screen in an intuitive way
 
@@ -108,8 +120,8 @@ filetype indent on      "Load filetype-specific indent files eg. .vim/indent/pyt
 set wildmenu            "visual autocomplete for command menu
 set lazyredraw          "Redraw only when we need to.
 set showmatch           "Highlight matching [{()}]
-set autoindent
-set smartindent
+set autoindent          "Not needed since we do filetype indent on
+" set smartindent
 " }}}
 "SEARCHING {{{
 set incsearch           "Search as characters are entered
