@@ -24,7 +24,7 @@ local brightness_icon = wibox.widget {
     	resize = false,
         widget = wibox.widget.imagebox,
     },
-    top = 3,
+    top = 1,
     widget = wibox.container.margin
 }
 

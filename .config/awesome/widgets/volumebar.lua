@@ -30,8 +30,8 @@ local volumebar_widget = wibox.widget {
     shape = gears.shape.bar,
     clip = true,
     margins       = {
-        top = 10,
-        bottom = 10,
+        top = 7,
+        bottom = 7,
     },
     widget = wibox.widget.progressbar
 }
