@@ -1,27 +1,29 @@
-" PLUGIN SECTION, MESS {{{
-" Vundle vimrc
-set nocompatible              " be iMproved, required
-filetype off                  " required
+"########################################
+"SECTION:  PLUGIN SECTION, MESS         #
+"########################################
+" be iMproved, required
+set nocompatible
+" required
+filetype off                  
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-" call vundle#begin('~/some/path/here')
-"
-let g:ycm_confirm_extra_conf = 0 
-"
+
+
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
 " Autocomplete, works with C++
 Plugin 'Valloric/YouCompleteMe'
 
+" Hopefully will solve issues with YCM
+Plugin 'rdnetto/YCM-Generator'
+
 " Nerd tree, CTRL+n 
 Plugin 'The-NERD-tree'
 
-" Shows marks, mapped to F6 F7
-" DoShowMarks! DoShowMarks NoShowMarks(!)
+" Shows marks, mapped to F6 F7 DoShowMarks! DoShowMarks NoShowMarks(!)
 Plugin 'jacquesbh/vim-showmarks'
 
 " No distractions, just text!
@@ -34,15 +36,82 @@ Plugin 'itchyny/lightline.vim'
 " Read git branch
 Plugin 'itchyny/vim-gitbranch'
 
-" Colourschemes!
-"Plugin 'Nequo/vim-allomancer' " Doesn't support 256 col yet!
-"Plugin 'morhetz/gruvbox'      " Issue with white (it's yellow?)
-"Plugin 'NLKNguyen/papercolor-theme'
-"Plugin 'nightsense/snow'
+" Switch quickly between .h and .cpp etc.
+Plugin 'a.vim'
 
-" Toggles booleans, binary etc.
-" <leader>r
+" Shows a (splitscreen) bar with all the "tags" This means classes, class
+" functions etc.
+Plugin 'Tagbar'
+
+" Not to confuse with the above. This toggles bools between True/False and ints
+" between 0 and 1 etc.
 Bundle 'https://github.com/sagarrakshe/toggle-bool'
+
+
+" "DOES NOT WORK YET! Perhaps it's because I use YouCpmpleteMe, should remap?"
+" "Type e.g. for<tab> to make new for loop, change int i to int someother and
+" "press tab again; it will update all variables by itself!
+" Plugin 'MarcWeber/vim-addon-mw-utils'
+" Plugin 'tomtom/tlib_vim'
+" Plugin 'garbas/vim-snipmate'
+" Plugin 'honza/vim-snippets'
+" imap <C-J> <Plug>snipMateNextOrTrigger
+
+"" Track the engine.
+" Plugin 'SirVer/ultisnips'
+
+" Snippets are separated from the engine. Add this if you want them:
+Plugin 'honza/vim-snippets'
+
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+"let g:UltiSnipsExpandTrigger="<c-q>"
+"let g:UltiSnipsJumpForwardTrigger="<c-b>"
+"let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" make YCM compatible with UltiSnips (using supertab)
+"let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+"let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+"let g:SuperTabDefaultCompletionType = '<C-n>'
+" 
+"" better key bindings for UltiSnipsExpandTrigger
+"let g:UltiSnipsExpandTrigger="<c-x>"
+"Let g:UltiSnipsJumpForwardTrigger="<c-j>"
+"Let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+"
+""
+""" If you want :UltiSnipsEdit to split your window.
+"let g:UltiSnipsEditSplit="vertical"
+" End configuration, makes the plugins available
+call vundle#end()
+filetype plugin indent on
+filetype plugin on
+
+"########################################
+"SECTION:  LEADER
+"########################################
+let mapleader=","       "Coma is the leader!
+
+"########################################
+"SECTION:  PLUGINS' SETUP
+"########################################
+
+" YouCompleteMe mods!
+
+" Fallback file, if there's no local one
+let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
+
+" Do not ask for confirmation of the extra config load
+let g:ycm_confirm_extra_conf = 0 
+"
+" map <C-]> :YcmCompleter GoToImprecise<CR>
+" " Go to definition
+" map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+" " close autocomplete window after use
+" let g:ycm_autoclose_preview_window_after_completion=1
+"
+"let g:snipMate = get(g:, 'snipMate', {}) " Allow for vimrc re-sourcing
+"let g:snipMate.scope_aliases = {}
+"let g:snipMate.scope_aliases['ruby'] = 'ruby,rails'
 
 " Otherwise status bar doesn't display
 set laststatus=2
@@ -62,31 +131,31 @@ let g:lightline = {
       \   'gitbranch': 'gitbranch#name'
       \ },
       \ }
-" End configuration, makes the plugins available
-call vundle#end()
-filetype plugin indent on
 
-" YouCompleteMe mods!
-map <C-]> :YcmCompleter GoToImprecise<CR>
-" Go to definition
-map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
-" close autocomplete window after use
-let g:ycm_autoclose_preview_window_after_completion=1
 
 " NerdTree mods
 map <C-n> :NERDTreeToggle<CR>
 let NERDTreeIgnore=['\.pyc$', '\.so$', '\.o$', '\~$'] "ignore files in NERDTree
-" autocmd vimenter *  NERDTree
+
+" Switch between .h and .cpp
+map <leader>a :A<CR>
+" Split and switch between .h/cpp (horizontal)
+map <leader>as :AS<CR>
+" Split and switch between .h/cpp (vertical)
+map <leader>av :AV<CR>
+" New tab and switch between .h/cpp (vertical)
+map <leader>at :AT<CR>
 
 " vim-showmarks mods
 nnoremap <F6> :DoShowMarks!<CR>
 nnoremap <F7> :NoShowMarks!<CR>
 
-" }}}
-" LEADER SHORTCUTS {{{
-let mapleader=","       "Coma is the leader!
-" }}}
-" SPACES, TABS, COLOURS {{{
+" Toggle the tagbar
+nnoremap <F8> :TagbarToggle<CR>
+
+"########################################
+"SECTION:   SPACES, TABS, COLOURS
+"########################################
 syntax enable           "Syntax processing
 
 set tabstop=2           "Spaces per tab
@@ -109,9 +178,10 @@ map <F5> :call SwithBackground()<CR>
 "call togglebg#map("<F5>")
 "map <F5> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
 "map <F5> :function Lightline_update
-"colorscheme phd
-" }}}
-" UI CONFIG {{{
+
+"########################################
+"SECTION:   UI CONFIG
+"########################################
 set number	" shows number lines
 set relativenumber      "Shows relative number. Map below
 set cursorline	" highlights line
@@ -122,8 +192,10 @@ set lazyredraw          "Redraw only when we need to.
 set showmatch           "Highlight matching [{()}]
 set autoindent          "Not needed since we do filetype indent on
 " set smartindent
-" }}}
-"SEARCHING {{{
+
+"########################################
+"SECTION:   SEARCHING
+"########################################
 set incsearch           "Search as characters are entered
 set hlsearch            "Highlight matches
 set ignorecase          "Case insensitivity
@@ -144,9 +216,9 @@ inoremap <esc> <nop>
 " Run leader and space instead :noh 
 nnoremap <silent> <leader><cr> :noh<CR>
 
-
-" }}}
-" FOLDING {{{
+"########################################
+"SECTION:   FOLDING
+"########################################
 set foldenable          " enable folding
 set foldlevelstart=10   " open most folds by default
 set foldnestmax=10      " 10 nested fold max
@@ -154,10 +226,12 @@ set foldlevel=0
 " space open/closes folds
 nnoremap <space> za
 set foldmethod=indent   " fold based on indent level
-" }}}
-" HIGHLIGHTS LAST INSERTED TEXT {{{
+
+"########################################
+"SECTION:   HIGHLIGHTS LAST INSERTED TEXT
+"########################################
 nnoremap gV `[v`]
-" }}}
+
 " allows cursor change in tmux mode {{{
 if exists('$TMUX')
   let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
@@ -168,7 +242,9 @@ else
 endif
 " }}}
 
-" MAPPING {{{
+"########################################
+"SECTION:   CUSTOM MAPPING
+"########################################
 " Remove arrows, it's better that way.
 nnoremap <Left>   :echoe "Use h"<CR>
 nnoremap <Right>  :echoe "Use l"<CR>
@@ -236,8 +312,6 @@ set runtimepath += "~/.vim/ibus.vim"
 set modeline
 set modelines=1
 
-call SwithBackground()
-call SwithBackground()
 " A functions that toggles vim + lightline
 " colourscheme for solarized
 function SwithBackground()
@@ -272,5 +346,4 @@ function! Lightline_update()
         catch
         endtry
 endfunction
-
-" vim:set foldmethod=marker foldlevel=0:
+call SwithBackground() " ONLY USE WITH SUCLKESS TERMINAL!
