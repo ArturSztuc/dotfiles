@@ -20,14 +20,23 @@ local wibox = require("wibox")
 local PATH_TO_ICONS = "/usr/share/icons/Arc/status/symbolic/"
 -- local HOME = os.getenv("HOME")
 
+--local battery_text = wibox.widget.textbox() 
+--battery_text:set_font("Play 9")
+--
+--local battery_icon = wibox.widget.imagebox()
+
 local battery_widget = wibox.widget {
-    {
-        id = "icon",
-        widget = wibox.widget.imagebox,
-        resize = false
-    },
-    layout = wibox.container.margin(_, 0, 0, 3)
+  {
+    id = "icon",
+    widget = wibox.widget.imagebox,
+  },
+  {
+    id = "txt",
+    widget = wibox.widget.textbox,
+  },
+  layout = wibox.layout.fixed.horizontal,
 }
+battery_widget.txt:set_font("Play 9")
 
 -- Popup with battery info
 -- One way of creating a pop-up notification - naughty.notify
@@ -35,6 +44,7 @@ local notification
 local function show_battery_status()
     awful.spawn.easy_async([[bash -c 'acpi']],
         function(stdout, _, _, _)
+          naughty.destroy(notification)
             notification = naughty.notify{
                 text =  stdout,
                 title = "Battery status",
@@ -57,7 +67,6 @@ local function show_battery_warning()
     naughty.notify{
         icon = "/home/artur/.config/awesome/icons/scream.png",
         icon_size=100,
-     --   text = "The Battery is dying",
         text = "Huston, we have a problem.",
         title = "Battery is dying",
         timeout = 5, hover_timeout = 0.5,
@@ -71,8 +80,11 @@ end
 watch("acpi", 10,
     function(widget, stdout, stderr, exitreason, exitcode)
         local batteryType
+
         local _, status, charge_str, time = string.match(stdout, '(.+): (%a+), (%d?%d%d)%%,? ?.*')
         local charge = tonumber(charge_str)
+        local chargestr = tonumber(string.format("%.0f", charge_str))
+        battery_widget.txt:set_text(" " .. chargestr .. "%")
         if (charge >= 0 and charge < 15) then
             batteryType = "battery-empty%s-symbolic"
             if status ~= 'Charging' then
@@ -88,12 +100,17 @@ watch("acpi", 10,
         else
             batteryType = string.format(batteryType, '')
         end
-        widget.icon:set_image(PATH_TO_ICONS .. batteryType .. ".svg")
+        battery_widget.icon:set_image(PATH_TO_ICONS .. batteryType .. ".svg")
+--        widget.icon:set_image(PATH_TO_ICONS .. batteryType .. ".svg")
 
         -- Update popup text
-        -- battery_popup.text = string.gsub(stdout, "\n$", "")
-    end,
-    battery_widget)
+        --battery_popup.text = string.gsub(stdout, "\n$", "")
+      end,
+--    battery_text,
+--    battery_icon,
+    battery_widget
+  )
+
 
 battery_widget:connect_signal("mouse::enter", function() show_battery_status() end)
 battery_widget:connect_signal("mouse::leave", function() naughty.destroy(notification) end)
