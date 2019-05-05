@@ -1,47 +1,53 @@
--- Standard awesome library
-local gears = require("gears")
-local awful = require("awful")
+-- STANDARD AWESOME LIBRARY
+local gears             = require("gears")
+local awful             = require("awful")
 require("awful.autofocus")
 
--- Widget and layout library
-local wibox = require("wibox")
+-- WIDGET AND LAYOUT LIBRARY
+local wibox             = require("wibox")
 
--- Theme handling library
-local beautiful = require("beautiful")
+-- THEME HANDLING LIBRARY
+local beautiful         = require("beautiful")
 
--- Notification library
-local naughty = require("naughty")
-local menubar = require("menubar")
-local hotkeys_popup = require("awful.hotkeys_popup").widget
+-- NOTIFICATION LIBRARY
+local naughty           = require("naughty")
+local menubar           = require("menubar")
+local hotkeys_popup     = require("awful.hotkeys_popup").widget
 
--- Expanded layouts library (GAPS!!)
--- local lain = require("lain")
+local bottombar = require("bottomwibar")
+
+-- EXPANDED LAYOUTS LIBRARY (GAPS!!)
+local lain = require("lain")
 
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
--- Custom Awesome WM Widgets
-local volume_widget = require('widgets/volume')
-local volumebar_widget = require('widgets/volumebar')
- local battery_widget  = require('widgets/battery') -- FLAG
-local brightness_widget  = require('widgets/brightness')
-local mic_widget  = require('widgets/mic')
-local micbar_widget  = require('widgets/micbar')
+-- CUSTOM AWESOME WM WIDGETS
+local volume_widget     = require('widgets/volume')
+local volumebar_widget  = require('widgets/volumebar')
+local battery_widget    = require('widgets/battery') -- FLAG
+local brightness_widget = require('widgets/brightness')
+local mic_widget        = require('widgets/mic')
+local micbar_widget     = require('widgets/micbar')
+
 require('widgets/spotify')
 
+-- CUSTOM PACKAGES TO RUN AT START
+-- This is not a good practice, I should attach this to X11 init instead!
 awful.spawn.with_shell(". ~/.config/awesome/autorun.sh")
--- {{{ Error handling
+
+-- ERROR HANDLING
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
 -- FLAG > Check where the fallback config is and update it to something more managable...
 if awesome.startup_errors then
     naughty.notify({ preset = naughty.config.presets.critical,
-                     title = "Oops, there were errors during startup!",
-                     text = awesome.startup_errors })
+                     title  = "Oops, there were errors during startup!",
+                     text   = awesome.startup_errors })
 end
 
--- Handle runtime errors after startup
+-- HANDLE RUNTIME ERRORS AFTER STARTUP
 do
     local in_error = false
     awesome.connect_signal("debug::error", function (err)
@@ -55,21 +61,20 @@ do
         in_error = false
     end)
 end
--- }}}
 
--- {{{ Variable definitions
+-- VARIABLE DEFINITIONS
 -- Themes define colours, icons, font and wallpapers.
---beautiful.init("~/.config/awesome/themes/solarized/theme.lua")
 beautiful.init("~/.config/awesome/themes/papyrus/theme.lua")
---beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
---terminal = "mate-terminal"
-terminal = "/home/artur/.terminal.sh"
+-- The script opens mate-terminal in either light or dark colourscheme depending
+-- on the current time.
+--terminal = "/home/artur/.terminal.sh"
+terminal = "st"
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 
--- Default modkey.
+-- DEFAULT MODKEY.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
 -- If you do not like this or do not have such a key,
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
@@ -95,9 +100,8 @@ awful.layout.layouts = {
 --    awful.layout.suit.corner.sw,
 --    awful.layout.suit.corner.se,
 }
--- }}}
 
--- {{{ Helper functions
+-- HELPER FUNCTIONS
 local function client_menu_toggle_fn()
     local instance = nil
 
@@ -110,51 +114,25 @@ local function client_menu_toggle_fn()
         end
     end
 end
--- }}}
 
--- {{{ Menu
--- Create a launcher widget and a main menu
-myawesomemenu = {
-   { "hotkeys", function() return false, hotkeys_popup.show_help end},
-   { "manual", terminal .. " -e man awesome" },
-   { "edit config", editor_cmd .. " " .. awesome.conffile },
-   { "restart", awesome.restart },
-   { "quit", function() awesome.quit() end}
-}
-
--- Don't need a mouse, don't need a menu!
-mymainmenu = awful.menu({ items = { --{ "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    --{ "mate-terminal", terminal },
-                                    --{ "chrome", "google-chrome-stable", beautiful.google}
-                                  --  { "chrome", "google-chrome-stable"}
-                                  }
-                        })
-
-mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
-                                     menu = mymainmenu })
-
--- Menubar configuration
+-- MENUBAR CONFIGURATION
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
--- }}}
-
--- Keyboard map indicator and switcher
-kbdcfg = {}
-kbdcfg.cmd = "setxkbmap"
-kbdcfg.layout = { { "us", "" }, { "gb", "" } }
-kbdcfg.current = 2  -- de is our default layout
-kbdcfg.widget = wibox.widget.textbox()
-kbdcfg.widget:set_text(" " .. kbdcfg.layout[kbdcfg.current][1] .. " ")
-kbdcfg.switch = function ()
-  kbdcfg.current = kbdcfg.current % #(kbdcfg.layout) + 1
-  local t = kbdcfg.layout[kbdcfg.current]
-  kbdcfg.widget:set_text(" " .. t[1] .. " ")
-  os.execute( kbdcfg.cmd .. " " .. t[1] .. " " .. t[2] )
-end
 
 
--- {{{ Wibar
+-- WIBAR
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock()
+
+local mycal = lain.widget.cal{
+  attach_to = {mytextclock},
+  notification_preset = {
+    font = "Monospace 10",
+    fg   = beautiful.fg_normal,
+    bg   = beautiful.bg_normal
+  }
+}
+
+
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -199,6 +177,8 @@ local tasklist_buttons = gears.table.join(
                                               awful.client.focus.byidx(-1)
                                           end))
 
+
+-- SET A WALLPAPER ON EACH SCREEN, USING THE ONE DEFINED IN THEME.LUA
 local function set_wallpaper(s)
     -- Wallpaper
     if beautiful.wallpaper then
@@ -210,59 +190,22 @@ local function set_wallpaper(s)
         gears.wallpaper.maximized(wallpaper, s, true)
     end
 end
+local cpu = lain.widget.cpu {
+    settings = function()
+        widget:set_markup("CPU1: " .. cpu_now[1].usage .. " CPU2: " .. cpu_now[2].usage .. " CPU: " .. cpu_now.usage )
+    end
+}
+
 
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
-local function powerline_add(self, ...)
-    local colors,new_widgets, dir, count = self.colors or {
-      "#3e2d1e",
-      "#412900",
-    }, {...}, self.direction or "right", #self.children/2
-    local ridx    = (dir=="right" and 1 or -1)
 
-    if self.children[count] then self.children[count]:emit_signal("widget::redraw_needed") end
+-- THIS WILL BE USED FOR THE POWERBAR-LIKE WIBAR
+local markup = lain.util.markup
+local separators = lain.util.separators
 
-    for i=1, #new_widgets do
-        local color = gears.color(colors[(count%#colors) + 1])
-        local nextc = gears.color(colors[((count+ridx)%#colors) + 1])
-
-        local separator = wibox.widget {
-            fit = function(self,c,w,h) return h/2,h end,
-            draw = function(sep, context, cr, w,h)
-                local children = self:get_children()
-                local is_edge = (ridx==1 and children[#children] == sep) or
-                    (ridx==-1 and sep==children[1])
-
-                if not is_edge then
-                    cr:set_source(nextc)
-                    cr:paint()
-                end
-                local begx = dir == "right" and 0 or w
-                cr:move_to(begx,0)
-                cr:line_to(begx==0 and w or 0,h/2)
-                cr:line_to(begx, h)
-                cr:close_path()
-                cr:set_source(color)
-                cr:fill()
-            end,
-            widget = wibox.widget.base.make_widget
-        }
-
-        if dir == "left"  then self:real_add(separator) end
-        self:real_add(wibox.container.background(new_widgets[i],color))
-        if dir == "right" then self:real_add(separator) end
-        count = count + 1
-    end
-end
-
-local function powerline_layout()
-    local l = wibox.layout.fixed.horizontal()
-    rawset(l, "real_add", l.add        )
-    rawset(l, "add"     , powerline_add)
-    return l
-end
-
+-- SET EACH SCREEN
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
@@ -270,6 +213,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
     local l = awful.layout.suit -- Just to save us some typing, use an alias
 
+--    -- Tags with normal names
 --    awful.tag.add("home",{  -- one 一
 --      --icon      = beautiful.home,
 --      init      = true,
@@ -310,55 +254,14 @@ awful.screen.connect_for_each_screen(function(s)
 --      layout = l.fair,
 --      screen=s})
 
---    awful.tag.add("一",{  -- one 一
---      --icon      = beautiful.home,
---      init      = true,
---      layout    = l.fair,
---      selected  = true,
---      screen=s})
---    awful.tag.add("二",{-- 二
---      --icon=beautiful.www,
---      layout = l.max.fullscreen,
---      exec_once = {"mate-terminal"},
---      screen=s})
---    awful.tag.add("三",{-- 三
---      --icon=beautiful.mail,
---      layout = l.fair,
---      screen=s})
---    awful.tag.add("四",{-- 四
---      --icon=beautiful.chat,
---      layout = l.fair,
---      screen=s})
---    awful.tag.add("五",{-- 五
---      --icon=beautiful.media,
---      layout = l.fair,
---      screen=s})
---    awful.tag.add("六",{-- 六
---      --icon=beautiful.term,
---      layout = l.fair,
---      screen=s})
---    awful.tag.add("七",{-- 七
---      --icon=beautiful.term,
---      layout = l.fair,
---      screen=s})
---    awful.tag.add("八",{ -- 九
---      --icon=beautiful.term,
---      layout = l.fair,
---      screen=s})
---    awful.tag.add("九",{ -- 九
---      --icon=beautiful.spotify,
---      layout = l.fair,
---      screen=s})
-
-
-
+    -- Tags with japanese numbers
     awful.tag.add("",{  -- one 一
       icon      = beautiful.kanji1,
       init      = true,
       layout    = l.fair,
       selected  = true,
       screen=s})
-    awful.tag.add("",{-- 二
+    awful.tag.add("",{-- 二 
       icon      = beautiful.kanji2,
       layout = l.max.fullscreen,
       exec_once = {"mate-terminal"},
@@ -392,8 +295,16 @@ awful.screen.connect_for_each_screen(function(s)
       layout = l.fair,
       screen=s})
 
-    -- Create a promptbox for each screen
-    s.mypromptbox = awful.widget.prompt()
+    -- Generate a local prompt with user-defined args and make it my default
+    -- prompt wiget
+    local localprompt = awful.widget.prompt {
+      prompt = '<b>Run: </b>',    -- Bold "Run: "
+      bg = beautiful.color_red,   -- Red background "box"
+    }
+
+    -- Make this local prompt a default prompt widget
+    s.mypromptbox = localprompt
+
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     s.mylayoutbox = awful.widget.layoutbox(s)
@@ -402,116 +313,114 @@ awful.screen.connect_for_each_screen(function(s)
                            awful.button({ }, 3, function () awful.layout.inc(-1) end),
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
---    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons, nil, nil, powerline_layout())
-    --  spacing = 15,
-    --  shape function(cr, width, height)
-    --    gears.shape.powerline (cr, width, height, -10)
-    --  end
-    --})
---    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, awful.util.taglist_buttons, {
---      spacing = 0,
---      shape = function(cr, width, height)
---        gears.shape.powerline (cr, width, height, -4)
---      end
---    })
+    -- Contain the taglist in a box/rectangle background
+    mytaglistcont = wibox.container.background(s.mytaglist, beautiful.color_lbrown, gears.shape.rectangle)
+    -- Margin so it's central in y direction on the wibar
+    s.mytag = wibox.container.margin(mytaglistcont, 0,0,3,3)
 
     -- Create a tasklist widget
- --   s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
-    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
---    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, awful.util.tasklist_buttons, {
---      spacing = 0,
---      shape = function(cr, width, height)
---        --gears.shape.powerline (cr, width, height, -10)
---        gears.shape.powerline (cr, width, height, -4)
---      end
---    })
-
+--    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
+    -- Not perfect, but this generates a powerline-like box.
+    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, awful.util.tasklist_buttons, {
+      spacing = 0,
+      shape = function(cr, width, height)
+        --gears.shape.powerline (cr, width, height, -10)
+        gears.shape.powerline (cr, width, height, -10)
+      end
+    })
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s ,height=22, ontop=false}
+    s.mywibox = awful.wibar({ position = "top", screen = s ,height=25, ontop=false , visible=false}
     )
+    -- Create the wibox
+--    s.mywibox_bottom = awful.wibar({ position = "bottom", screen = s ,height=25, ontop=false , visible=true}
+--    )
 
-    -- Separators and gaps to put into wibox (separate widgets)
-    sprtr = wibox.widget.textbox()
-    sprtr:set_text(" : ")
-    sprtr2 = wibox.widget.textbox()
-    sprtr2:set_text(" || ")
-
-    gapp = wibox.widget.textbox()
-    gapp:set_text(" ")
+    bottombar.setBar(s)
+    
+    -- Need this to make a box around systray - basically sets background colour
+    beautiful.bg_systray = beautiful.color_red,
 
     -- Add widgets to the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
-      --      mylauncher,
-      --      sprtr2,
-            s.mytaglist,
-            sprtr2,
-            s.mypromptbox,
+
+            -- Arrows to make powerline-like effect, with mrgins.
+            --wibox.container.margin(separators.arrow_right("alpha", beautiful.color_lbrown),0,0,3,3),
+            -- Taglist has a set background so no need for box around it
+            s.mytag,
+            wibox.container.margin(separators.arrow_right(beautiful.color_lbrown,"alpha"), 0,0,3,3),
+
+            -- Promptbox
+            wibox.container.margin(separators.arrow_right("alpha", beautiful.color_red),0,0,3,3),
+            wibox.container.margin(s.mypromptbox, 0,0,3,3),
+            wibox.container.margin(separators.arrow_left(beautiful.color_red,"alpha"),0,0,3,3),
         },
-        s.mytasklist, -- Middle widget
+        wibox.container.margin(s.mytasklist,0,0,3,3), -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            --layout = wibox.layout.flex.horizontal,
---            sprtr,
---            spotify_widget,
---            sprtr,
---            mic_widget, gapp, gapp,
---            micbar_widget,
---            sprtr,
---            volume_widget, gapp, gapp,
---            volumebar_widget,
---            sprtr,
---            brightness_widget,
---            sprtr,
---            gapp,
---            battery_widget, gapp, --gapp, -- FLAG 
---            sprtr,
---            wibox.widget.systray(),
---            sprtr,
---            mytextclock,
---            sprtr,
---            s.mylayoutbox,
-            spotify_widget,
-            mic_widget,
-            spacing_widget,
-            micbar_widget,
-            spacing_widget,
-            volume_widget,
-            spacing_widget,
-            volumebar_widget,
-            spacing_widget,
-            brightness_widget,
-            spacing_widget,
-            battery_widget,
-            spacing_widget,
-            wibox.widget.systray(),
-            spacing_widget,
-            mytextclock,
-            spacing_widget,
-            s.mylayoutbox,
+
+            -- Spotify widget - Will still have a small empty "powerline" arrow
+            -- if spotify is not on
+            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_violet),0,0,3,3),
+            wibox.container.margin(wibox.container.background(spotify_widget,beautiful.color_violet),0,0,3,3),
+            wibox.container.margin(separators.arrow_left(beautiful.color_violet, "alpha"),0,0,3,3),
+
+            -- Microphone widget (Try lain one?)
+            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_cyan),0,0,3,3),
+            wibox.container.margin(wibox.container.background(mic_widget, beautiful.color_cyan),0,0,3,3),
+            wibox.container.margin(wibox.container.background(micbar_widget, beautiful.color_cyan),0,0,3,3),
+            wibox.container.margin(separators.arrow_left(beautiful.color_cyan, "alpha"),0,0,3,3),
+
+            -- Volume widget (Try lain one?)
+            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_blue),0,0,3,3),
+            wibox.container.margin(wibox.container.background(volume_widget, beautiful.color_blue),0,0,3,3),
+            wibox.container.margin(wibox.container.background(volumebar_widget, beautiful.color_blue),0,0,3,3),
+            wibox.container.margin(separators.arrow_left(beautiful.color_blue, "alpha"),0,0,3,3),
+
+            -- Brightness widget (Try lain one?)
+            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_green),0,0,3,3),
+            wibox.container.margin(wibox.container.background(brightness_widget, beautiful.color_green),0,0,3,3),
+            wibox.container.margin(separators.arrow_left(beautiful.color_green, "alpha"),0,0,3,3),
+
+            -- Battery widget (Not working properly - doesn't update
+            -- automatically, or often enough)
+            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_yellow),0,0,3,3),
+            wibox.container.margin(wibox.container.background(battery_widget, beautiful.color_yellow),0,0,3,3),
+            wibox.container.margin(separators.arrow_left(beautiful.color_yellow, "alpha"),0,0,3,3),
+
+            -- Date/Clock widget, maybe update it to full callendar...
+            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_orange),0,0,3,3),
+            wibox.container.margin(wibox.container.background(mytextclock, beautiful.color_orange),0,0,3,3),
+            wibox.container.margin(separators.arrow_left(beautiful.color_orange, "alpha"),0,0,3,3),
+
+            -- Systray widget! 
+            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_red),0,0,3,3),
+            wibox.container.margin(wibox.widget.systray(), 0,0,3,3),
+            wibox.container.margin(separators.arrow_left(beautiful.color_red, "alpha"),0,0,3,3),
+
+            -- Layout-box widget, displays current WM layout on current tag
+            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_magneta),0,0,3,3),
+            wibox.container.margin(wibox.container.background(s.mylayoutbox, beautiful.color_magneta),0,0,3,3),
+            --wibox.container.margin(separators.arrow_left(beautiful.color_magneta, "alpha"),0,0,3,3),
         },
---    },
---    bottom = 4, -- don't forget to increase wibar height
---    color = "#80aa80",
---    widget = wibox.container.margin,
   }
 end)
--- }}}
 
--- {{{ Mouse bindings
+-- MOUSE BINDINGS
 root.buttons(gears.table.join(
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
+--    awful.button({ }, 3, function () mymainmenu:toggle() end), -- No menus,
+--    this is WM not some DM...
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
--- }}}
 
--- {{{ Key bindings
+-- KEY BINDINGS
 globalkeys = gears.table.join(
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
@@ -534,10 +443,8 @@ globalkeys = gears.table.join(
         end,
         {description = "focus previous by index", group = "client"}
     ),
---    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
---              {description = "show main menu", group = "awesome"}),
 
-    -- Layout manipulation
+    -- LAYOUT MANIPULATION
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
               {description = "swap with next client by index", group = "client"}),
     awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
@@ -557,7 +464,7 @@ globalkeys = gears.table.join(
         end,
         {description = "go back", group = "client"}),
 
-    -- Standard program
+    -- STANDARD PROGRAM
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
@@ -593,7 +500,7 @@ globalkeys = gears.table.join(
               end,
               {description = "restore minimized", group = "client"}),
 
-    -- Prompt
+    -- PROMPT
     awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
               {description = "run prompt", group = "launcher"}),
 
@@ -607,11 +514,12 @@ globalkeys = gears.table.join(
                   }
               end,
               {description = "lua execute prompt", group = "awesome"}),
-    -- Menubar
+
+    -- Menubar - Do we need this? What is it even for?
     awful.key({ modkey }, "p", function() menubar.show() end,
               {description = "show the menubar", group = "launcher"}),
 
-    -- Custom key bindings
+    -- CUSTOM KEY BINDINGS
     --    Lock screen
     awful.key({ modkey,        }, "l",
         function () awful.spawn("xscreensaver-command -lock") end,
@@ -632,13 +540,6 @@ globalkeys = gears.table.join(
       awful.util.spawn("amixer -D pulse set Master 1+ toggle", false)
       awful.util.spawn("amixer -D pulse sset Mater toggle", false) 
     end),
-
-    --    Play song  FLAG : Not working yet, 
-    --    I don't actually have this button on my laptop :(
-    --    Need different key binding.
---    awful.key({modkey, "Alt"}, "n<", function()
---      awful.util.spawn("playerctl play-pause", false)
---    end),
 
     --    Next song
     awful.key({modkey, "Control"}, "#", function()
@@ -669,12 +570,32 @@ globalkeys = gears.table.join(
     awful.key({}, "XF86MonBrightnessUp", function () awful.spawn("xbacklight -inc 5") end, {description = "increase brightness", group = "custom"}),
     awful.key({}, "XF86MonBrightnessDown", function () awful.spawn("xbacklight -dec 5") end, {description = "decrease brightness", group = "custom"}),
     
-    awful.key({modkey}, "w", function()
+
+--    awful.key({modkey}, "w", function()
+--      for s in screen do
+--        s.mywibox.visible = not s.mywibox.visible
+--        if s.mywibox_bottom then
+--          s.mywibox_bottom.visible = not s.mywibox_bottom.visible
+--        end
+--      end
+--    end,
+--    {description = "toggle all wiboxes", group = "custom"}),
+
+    awful.key({modkey}, "e", function()
       for s in screen do
         s.mywibox.visible = not s.mywibox.visible
       end
     end,
-    {description = "toggle wibox", group = "custom"})
+    {description = "toggle top wibox", group = "custom"}),
+
+    awful.key({modkey}, "b", function()
+      for s in screen do
+        if s.mywibox_bottom then
+          s.mywibox_bottom.visible = not s.mywibox_bottom.visible
+        end
+      end
+    end,
+    {description = "toggle bottom wibox", group = "custom"})
         
 )
 
@@ -685,7 +606,9 @@ clientkeys = gears.table.join(
             c:raise()
         end,
         {description = "toggle fullscreen", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
+    --awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
+    --          {description = "close", group = "client"}),
+    awful.key({ modkey}, "w",      function (c) c:kill()                         end,
               {description = "close", group = "client"}),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
               {description = "toggle floating", group = "client"}),
@@ -777,12 +700,10 @@ clientbuttons = gears.table.join(
     awful.button({ modkey }, 1, awful.mouse.client.move),
     awful.button({ modkey }, 3, awful.mouse.client.resize))
 
--- Set keys
+-- SET KEYS
 root.keys(globalkeys)
--- }}}
 
--- {{{ Rules
--- Rules to apply to new clients (through the "manage" signal).
+-- RULES TO APPLY TO NEW CLIENTS (THROUGH THE "MANAGE" SIGNAL).
 awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
@@ -830,18 +751,13 @@ awful.rules.rules = {
     },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
---    --   properties = { screen = 1, tag = "2" } },
     { rule = { instance = "google-chrome-stable"},
       properties = {tag = "internet"}
     },
---  { rule = { class = "gimp" },
---    properties = { floating = true } 
- -- },
 }
 -- }}}
 
--- {{{ Signals
+--  SIGNALS
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
@@ -856,7 +772,7 @@ client.connect_signal("manage", function (c)
     end
 end)
 
--- Add a titlebar if titlebars_enabled is set to true in the rules.
+-- ADD A TITLEBAR IF TITLEBARS_ENABLED IS SET TO TRUE IN THE RULES.
 client.connect_signal("request::titlebars", function(c)
     
     -- buttons for the titlebar
@@ -888,4 +804,3 @@ end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
--- }}}
