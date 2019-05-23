@@ -30,6 +30,9 @@ Plugin 'jacquesbh/vim-showmarks'
 " Just do :Goyo, :Goyo 120/80%/x120/x60%
 Plugin 'junegunn/goyo.vim'
 
+" A nice toolbox for edditing .tex files
+Plugin 'lervag/vimtex'
+
 " Awesome status bar at the bottom
 Plugin 'itchyny/lightline.vim'
 
@@ -43,10 +46,18 @@ Plugin 'a.vim'
 " functions etc.
 Plugin 'Tagbar'
 
+" cs'" ds"
+Plugin 'tpope/vim-surround' 
+" Commenting!
+Plugin 'scrooloose/nerdcommenter'
+
 " Not to confuse with the above. This toggles bools between True/False and ints
 " between 0 and 1 etc.
 Bundle 'https://github.com/sagarrakshe/toggle-bool'
 
+Plugin 'prabirshrestha/async.vim'
+Plugin 'prabirshrestha/asyncomplete.vim'
+Plugin 'wellle/tmux-complete.vim'
 
 " "DOES NOT WORK YET! Perhaps it's because I use YouCpmpleteMe, should remap?"
 " "Type e.g. for<tab> to make new for loop, change int i to int someother and
@@ -58,29 +69,26 @@ Bundle 'https://github.com/sagarrakshe/toggle-bool'
 " imap <C-J> <Plug>snipMateNextOrTrigger
 
 "" Track the engine.
-" Plugin 'SirVer/ultisnips'
+Plugin 'SirVer/ultisnips'
 
 " Snippets are separated from the engine. Add this if you want them:
 Plugin 'honza/vim-snippets'
+Plugin 'rbonvall/snipmate-snippets-bib'
+
+" Indent guides
+Plugin 'nathanaelkane/vim-indent-guides'
+
+" Move along a long line with <leader><leader>w / b 
+Plugin 'easymotion/vim-easymotion'
 
 " Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
 "let g:UltiSnipsExpandTrigger="<c-q>"
-"let g:UltiSnipsJumpForwardTrigger="<c-b>"
-"let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsExpandTrigger="<C-Space>"
+let g:UltiSnipsJumpForwardTrigger="<C-b>"
+let g:UltiSnipsJumpBackwardTrigger="<C-z>"
 
-" make YCM compatible with UltiSnips (using supertab)
-"let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
-"let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-"let g:SuperTabDefaultCompletionType = '<C-n>'
-" 
-"" better key bindings for UltiSnipsExpandTrigger
-"let g:UltiSnipsExpandTrigger="<c-x>"
-"Let g:UltiSnipsJumpForwardTrigger="<c-j>"
-"Let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-"
-""
 """ If you want :UltiSnipsEdit to split your window.
-"let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsEditSplit="vertical"
 " End configuration, makes the plugins available
 call vundle#end()
 filetype plugin indent on
@@ -90,12 +98,19 @@ filetype plugin on
 "SECTION:  LEADER
 "########################################
 let mapleader=","       "Coma is the leader!
+let maplocalleader="\\"
 
 "########################################
 "SECTION:  PLUGINS' SETUP
 "########################################
+"
+let g:vimtex_view_method = 'zathura'
+
+" Indent guides on startup
+let g:indent_guides_enable_on_vim_startup = 1
 
 " YouCompleteMe mods!
+
 
 " Fallback file, if there's no local one
 let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
@@ -132,6 +147,45 @@ let g:lightline = {
       \ },
       \ }
 
+let g:tmuxcomplete#asyncomplete_source_options = {
+            \ 'name':      'tmux',
+            \ 'whitelist': ['*'],
+            \ 'config': {
+            \     'splitmode':      'words',
+            \     'filter_prefix':   1,
+            \     'show_incomplete': 1,
+            \     'sort_candidates': 0,
+            \     'scrollback':      0,
+            \     'truncate':        0
+            \     }
+            \ }
+
+let g:tmuxcomplete#trigger = 'omnifunc'
+
+" Commenter
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
+
+" Set a language to use its alternate delimiters by default
+let g:NERDAltDelims_java = 1
+
+" Add your own custom formats or override the defaults
+let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+
+" Allow commenting and inverting empty lines (useful when commenting a region)
+let g:NERDCommentEmptyLines = 1
+
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+
+" Enable NERDCommenterToggle to check all selected lines is commented or not 
+let g:NERDToggleCheckAllLines = 1
 
 " NerdTree mods
 map <C-n> :NERDTreeToggle<CR>
@@ -163,17 +217,18 @@ set shiftwidth=2        "Spaces
 set softtabstop=2       "Spaces in tab when editing
 set expandtab           "Tabs ARE spaces
 
-set tw=80               "Number of characters/line
+"set tw=80               "Number of characters/line
 set splitbelow splitright " Split screen in an intuitive way
 
 syntax on
+
 colorscheme solarized 
 " Solarized colorscheme basically takes colours from the terminal, so you 
 " really need solarized terminal for this to work. I made my own "Papyrus"
 " terminal color scheme, which is pulled into vim from terminal by "solarized"
 "colorscheme papyrus
-
 " Switch from light to dark
+
 map <F5> :call SwithBackground()<CR>
 "call togglebg#map("<F5>")
 "map <F5> :let &background = ( &background == "dark"? "light" : "dark" )<CR>
@@ -295,7 +350,7 @@ nnoremap <leader>9 9gt
 nnoremap <leader>tN :tabnew<CR>
 
 " Easiely close a tab
-nnoremap <leader>tc :tabclose<CR>
+nnoremap <leader>tC :tabclose<CR>
 
 " Easiely move a tab
 nnoremap <leader>tm :tabmove<CR>
@@ -327,23 +382,29 @@ endfunction
 " dark/light colourscheme of vim. Only works for
 " solarized for now...
 function! Lightline_update()
-        if !exists('g:loaded_lightline')
-                return
-        endif
-        try
-                if g:colors_name =~# 'solarized'
-                        runtime autoload/lightline/colorscheme/solarized.vim
-                        call lightline#init()
-                        call lightline#colorscheme()
-                        call lightline#update()
-                endif
-                if g:colors_name =~# 'PaperColor'
-                        runtime autoload/lightline/colorscheme/PaperColor.vim
-                        call lightline#init()
-                        call lightline#colorscheme()
-                        call lightline#update()
-                endif
-        catch
-        endtry
+  if !exists('g:loaded_lightline')
+    return
+  endif
+  try
+    if g:colors_name =~# 'solarized'
+      runtime autoload/lightline/colorscheme/solarized.vim
+      call lightline#init()
+      call lightline#colorscheme()
+      call lightline#update()
+    endif
+    if g:colors_name =~# 'PaperColor'
+      runtime autoload/lightline/colorscheme/PaperColor.vim
+      call lightline#init()
+      call lightline#colorscheme()
+      call lightline#update()
+    endif
+  catch
+  endtry
 endfunction
+let g:indent_guides_auto_colors = 0
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=10
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=0
+"let g:indent_guides_start_level=2
+let g:indent_guides_guide_size=1
 call SwithBackground() " ONLY USE WITH SUCLKESS TERMINAL!
+
