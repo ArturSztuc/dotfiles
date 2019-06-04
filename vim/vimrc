@@ -76,7 +76,9 @@ Plugin 'honza/vim-snippets'
 Plugin 'rbonvall/snipmate-snippets-bib'
 
 " Indent guides
-Plugin 'nathanaelkane/vim-indent-guides'
+" Plugin 'nathanaelkane/vim-indent-guides'
+" Plugin 'thaerkh/vim-indentguides'
+Plugin 'Yggdroot/indentLine'
 
 " Move along a long line with <leader><leader>w / b 
 Plugin 'easymotion/vim-easymotion'
@@ -107,7 +109,12 @@ let maplocalleader="\\"
 let g:vimtex_view_method = 'zathura'
 
 " Indent guides on startup
-let g:indent_guides_enable_on_vim_startup = 1
+" let g:indent_guides_enable_on_vim_startup = 1
+" let g:indentguides_ignorelist = ['text']
+" let g:indentguides_spacechar = '┆'
+" let g:indentguides_tabchar = '|'
+let g:indentLine_setColors = 0
+let g:indentLine_char = '┊'
 
 " YouCompleteMe mods!
 
@@ -360,6 +367,13 @@ nnoremap <leader>tn :tabnext<CR>
 
 " Easiely go to previous tab
 nnoremap <leader>tp :tabprevious<CR>
+
+nnoremap <leader>] :bnext<CR>
+nnoremap <leader>[ :bprevious<CR>
+nnoremap <leader>' :bnext<CR>:redraw<CR>:ls<CR>
+nnoremap <leader># :bprevious<CR>:redraw<CR>:ls<CR>
+
+
 " }}}
 
 noremap <leader>r :ToggleBool<CR>
@@ -401,10 +415,10 @@ function! Lightline_update()
   catch
   endtry
 endfunction
-let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=10
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=0
-"let g:indent_guides_start_level=2
-let g:indent_guides_guide_size=1
+"let g:indent_guides_auto_colors = 0
+"autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=10
+"autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=0
+""let g:indent_guides_start_level=2
+"let g:indent_guides_guide_size=1
 call SwithBackground() " ONLY USE WITH SUCLKESS TERMINAL!
 
