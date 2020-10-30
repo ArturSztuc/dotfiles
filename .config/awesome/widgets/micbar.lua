@@ -14,7 +14,8 @@ local spawn = require("awful.spawn")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 
-local request_command = 'amixer -D pulse sget Capture'
+--local request_command = 'amixer -D pulse sget Capture'
+local request_command = 'amixer get Capture'
 
 local bar_color = "#74aeab"
 local mute_color = "#ff0000"
@@ -51,9 +52,12 @@ local update_graphic = function(widget, stdout, _, _, _)
 end
 
 volumebar_widget:connect_signal("button::press", function(_,_,_,button)
-    if (button == 4)     then awful.spawn("amixer -D pulse sset Capture 5%+", false)
-    elseif (button == 5) then awful.spawn("amixer -D pulse sset Capture 5%-", false)
-    elseif (button == 1) then awful.spawn("amixer -D pulse sset Capture toggle", false)
+--    if (button == 4)     then awful.spawn("amixer -D pulse sset Capture 5%+", false)
+--    elseif (button == 5) then awful.spawn("amixer -D pulse sset Capture 5%-", false)
+--    elseif (button == 1) then awful.spawn("amixer -D pulse sset Capture toggle", false)
+    if (button == 4)     then awful.spawn("amixer set Capture 5%+", false)
+    elseif (button == 5) then awful.spawn("amixer set Capture 5%-", false)
+    elseif (button == 1) then awful.spawn("amixer set Capture toggle", false)
     end
 
     spawn.easy_async(request_command, function(stdout, stderr, exitreason, exitcode)

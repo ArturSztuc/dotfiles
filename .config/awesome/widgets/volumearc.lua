@@ -14,10 +14,15 @@ local spawn = require("awful.spawn")
 local watch = require("awful.widget.watch")
 local wibox = require("wibox")
 
-local GET_VOLUME_CMD = 'amixer -D pulse sget Master'
-local INC_VOLUME_CMD = 'amixer -D pulse sset Master 5%+'
-local DEC_VOLUME_CMD = 'amixer -D pulse sset Master 5%-'
-local TOG_VOLUME_CMD = 'amixer -D pulse sset Master toggle'
+--local GET_VOLUME_CMD = 'amixer -D pulse sget Master'
+--local INC_VOLUME_CMD = 'amixer -D pulse sset Master 5%+'
+--local DEC_VOLUME_CMD = 'amixer -D pulse sset Master 5%-'
+--local TOG_VOLUME_CMD = 'amixer -D pulse sset Master toggle'
+
+local GET_VOLUME_CMD = 'amixer get Master'
+local INC_VOLUME_CMD = 'amixer set Master 5%+'
+local DEC_VOLUME_CMD = 'amixer set Master 5%-'
+local TOG_VOLUME_CMD = 'amixer set Master toggle'
 
 local volumearc = wibox.widget {
     max_value = 1,

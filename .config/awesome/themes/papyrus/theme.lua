@@ -23,30 +23,14 @@ theme.font          = "sans 9"
 --theme.color_gray    = "#766854"
 --theme.color_green   = "#46511f"
 
--- SHADES OF YELLOW
---theme.color_yellow  = "#FFD700"
---theme.color_yellow  = "#FADA5E"
---theme.color_yellow  = "#EFCC00"
-
-theme.color_bbrown  = "#1e170e"
 theme.color_bbrown  = "#3e2d1e"
 --theme.color_cyan    = "#004953"
 theme.color_llbrown = "#f1e4b6"
 theme.color_lbrown  = "#533f25"
 theme.color_gray    = "#766854"
-theme.color_yellow  = "#FFFF66"
-theme.color_orange  = "#F38630"
-theme.color_orange  = "#FF5800"
-theme.color_orange  = "#FF7538"
-theme.color_orange  = "#E86100"
-theme.color_orange  = "#FE5A1D"
-theme.color_orange  = "#E34234"
-theme.color_orange  = "#D44500"
-theme.color_orange  = "#EC5800"
---theme.color_orange  = "#C46210"
---theme.color_orange  = "#BF5700"
--- theme.color_orange  = "#964B00" -- BROWN...
 
+theme.color_yellow  = "#FFFF66"
+theme.color_orange  = "#EC5800"
 theme.color_red     = "#A34545"
 theme.color_magneta = "#872F48"
 theme.color_violet  = "#563C5C" -- NEW Violet
@@ -55,6 +39,7 @@ theme.color_cyan    = "#004953" -- NEW Cyan
 theme.color_green   = "#46511f"
 
 theme.bg_normal     = "#372717"
+--theme.bg_normal     = theme.color_llbrown
 theme.bg_focus      = "#9f8f71"
 theme.bg_urgent     = "#ff0000"
 theme.bg_minimize   = "#444444"
@@ -70,6 +55,7 @@ theme.fg_minimize   = "#ffffff"
 theme.useless_gap   = dpi(3)
 theme.border_width  = dpi(2)
 
+--theme.border_normal = theme.bg_normal
 theme.border_normal = theme.bg_normal
 theme.border_focus  = theme.bg_focus
 theme.border_marked = theme.bg_urgent
@@ -89,6 +75,10 @@ theme.border_marked = theme.bg_urgent
 --
 --theme.tasklist_bg_normal="#403628"
 theme.tasklist_bg_normal= theme.color_lbrown
+theme.tasklist_shape_border_width_minimized	= 2
+theme.tasklist_bg_minimize = theme.border_normal
+theme.tasklist_shape_border_color_minimized	= theme.color_lbrown
+--theme.tasklist_bg_focus= theme.color_yellow
 
 -- Generate taglist squares:
 --local taglist_square_size = dpi(1)
@@ -148,7 +138,9 @@ theme.titlebar_maximized_button_focus_active  = themes_path.."default/titlebar/m
 --theme.wallpaper = "~/.config/awesome/wallpapers/rock-ocean-wallpaper-HD.jpg"
 --theme.wallpaper = "~/.config/awesome/wallpapers/mountains_2.jpg"
 --theme.wallpaper = "~/.config/awesome/wallpapers/solatized_03.jpg"
-theme.wallpaper = "~/.config/awesome/wallpapers/arab_01.jpg"
+--theme.wallpaper = "~/.config/awesome/wallpapers/arab_01.jpg"
+theme.wallpaper = "~/.config/awesome/wallpapers/themoon.jpg"
+--theme.wallpaper = "~/.config/awesome/wallpapers/themoon_2.jpg"
 -- theme.wallpaper = "~/.config/awesome/wallpapers/arabia.png"
 --theme.wallpaper = "~/.config/awesome/wallpapers/winter-wallpaper.jpg"
 --theme.wallpaper = "~/.config/awesome/wallpapers/atmosphere_NASA.jpg"

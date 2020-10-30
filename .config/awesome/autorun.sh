@@ -7,7 +7,8 @@ function run {
   fi
 }
 
-run setxkbmap gb
-xscreensaver -no-splash &
-ibus-daemon -xdr
+#run setxkbmap gb
+#xscreensaver -no-splash &
+#ibus-daemon -xdr
+#fcitx -dr
 offlineimap -c /home/artur/.offlineimaprc

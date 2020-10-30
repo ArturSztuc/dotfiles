@@ -14,6 +14,7 @@ local naughty           = require("naughty")
 local menubar           = require("menubar")
 local hotkeys_popup     = require("awful.hotkeys_popup").widget
 
+local myseparators = require("myseparator")
 local bottombar = require("bottomwibar")
 
 -- EXPANDED LAYOUTS LIBRARY (GAPS!!)
@@ -30,6 +31,9 @@ local battery_widget    = require('widgets/battery') -- FLAG
 local brightness_widget = require('widgets/brightness')
 local mic_widget        = require('widgets/mic')
 local micbar_widget     = require('widgets/micbar')
+--local gentoo_widget     = require('widgets/gentoo/gentoo')
+
+local mail_widget       = require('widgets/mail')
 
 require('widgets/spotify')
 
@@ -70,7 +74,8 @@ beautiful.init("~/.config/awesome/themes/papyrus/theme.lua")
 -- The script opens mate-terminal in either light or dark colourscheme depending
 -- on the current time.
 --terminal = "/home/artur/.terminal.sh"
-terminal = "st"
+--terminal = "st"
+terminal = "/home/artur/software/st/st"
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -121,6 +126,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 
 -- WIBAR
 -- Create a textclock widget
+
 mytextclock = wibox.widget.textclock()
 
 local mycal = lain.widget.cal{
@@ -131,8 +137,6 @@ local mycal = lain.widget.cal{
     bg   = beautiful.bg_normal
   }
 }
-
-
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -153,29 +157,29 @@ local taglist_buttons = gears.table.join(
                 )
 
 local tasklist_buttons = gears.table.join(
-                     awful.button({ }, 1, function (c)
-                                              if c == client.focus then
-                                                  c.minimized = true
-                                              else
-                                                  -- Without this, the following
-                                                  -- :isvisible() makes no sense
-                                                  c.minimized = false
-                                                  if not c:isvisible() and c.first_tag then
-                                                      c.first_tag:view_only()
-                                                  end
-                                                  -- This will also un-minimize
-                                                  -- the client, if needed
-                                                  client.focus = c
-                                                  c:raise()
-                                              end
-                                          end),
-                     awful.button({ }, 3, client_menu_toggle_fn()),
-                     awful.button({ }, 4, function ()
-                                              awful.client.focus.byidx(1)
-                                          end),
-                     awful.button({ }, 5, function ()
-                                              awful.client.focus.byidx(-1)
-                                          end))
+  awful.button({ }, 1, function (c)
+    if c == client.focus then
+      c.minimized = true
+    else
+      -- Without this, the following
+      -- :isvisible() makes no sense
+      c.minimized = false
+      if not c:isvisible() and c.first_tag then
+        c.first_tag:view_only()
+      end
+      -- This will also un-minimize
+      -- the client, if needed
+      client.focus = c
+      c:raise()
+    end
+  end),
+awful.button({ }, 3, client_menu_toggle_fn()),
+awful.button({ }, 4, function ()
+  awful.client.focus.byidx(1)
+end),
+awful.button({ }, 5, function ()
+  awful.client.focus.byidx(-1)
+end))
 
 
 -- SET A WALLPAPER ON EACH SCREEN, USING THE ONE DEFINED IN THEME.LUA
@@ -190,6 +194,7 @@ local function set_wallpaper(s)
         gears.wallpaper.maximized(wallpaper, s, true)
     end
 end
+
 local cpu = lain.widget.cpu {
     settings = function()
         widget:set_markup("CPU1: " .. cpu_now[1].usage .. " CPU2: " .. cpu_now[2].usage .. " CPU: " .. cpu_now.usage )
@@ -203,6 +208,7 @@ screen.connect_signal("property::geometry", set_wallpaper)
 
 -- THIS WILL BE USED FOR THE POWERBAR-LIKE WIBAR
 local markup = lain.util.markup
+--local separators = lain.util.separators
 local separators = lain.util.separators
 
 -- SET EACH SCREEN
@@ -264,7 +270,6 @@ awful.screen.connect_for_each_screen(function(s)
     awful.tag.add("",{-- 二 
       icon      = beautiful.kanji2,
       layout = l.max.fullscreen,
-      exec_once = {"mate-terminal"},
       screen=s})
     awful.tag.add("",{-- 三
       icon      = beautiful.kanji3,
@@ -315,11 +320,119 @@ awful.screen.connect_for_each_screen(function(s)
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
 
     -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
+    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.noempty, taglist_buttons)
+--    s.mytaglist = awful.widget.taglist{
+--      screen = s, 
+--      filter = awful.widget.taglist.filter.noempty,
+--    widget_template = {
+--        {
+--            {
+--                {
+--                    {
+--                        id     = 'icon_role',
+--                        widget = wibox.widget.imagebox,
+--                    },
+----                    margins = 2,
+--                    widget  = wibox.container.margin,
+--                },
+--                {
+--                  id = 'taskbar_role',
+--                  widget =awful.widget.tasklist{
+--                            screen = s, 
+--                            --filter = awful.widget.tasklist.filter.currenttags, 
+--                            filter = awful.widget.tasklist.filter.currenttags, 
+--                            buttons = awful.util.tasklist_buttons,
+--                            layout = {
+--                              spacing = 5,
+--                              forced_num_cols=2,
+--                              forced_num_rows=2,
+--                              min_cols_size=7,
+--                              min_rows_size=7,
+--                            --  expand=true,
+--                              layout = wibox.layout.grid.horizontal},
+--                              widget_template = {
+--                                  {
+--                                      margins = 1,
+--                                      widget  = wibox.container.margin,
+--                                  },
+--                                  id              = 'background_role',
+--                                  widget          = wibox.container.background,
+--                              },
+--                            }
+--                },
+--
+--                layout = wibox.layout.fixed.horizontal,
+--            },
+----            left  = 10,
+----            right = 10,
+--           widget = wibox.container.margin
+--        },
+--       id     = 'background_role',
+--       widget = wibox.container.background,
+--    },
+--
+--      buttons = taglist_buttons}
+
+--s.mytaglist = awful.widget.taglist{
+--  screen = s, 
+--  filter = awful.widget.taglist.filter.noempty,
+--  widget_template = {
+--    {
+--      widget = separators.arrow_right("alpha", beautiful.color_lbrown),
+--    },
+--    {
+--      {
+--        {
+--          id     = 'icon_role',
+--          widget = wibox.widget.imagebox,
+--        },
+--        id = 'background_role',
+--        widget = wibox.container.background,
+--      },
+--      --      id = 'background_role',
+--      bg = beautiful.color_lbrown,
+--      widget = wibox.container.background,
+--    },
+--    {
+--      --      widget = separators.arrow_right(beautiful.color_red,"alpha"),
+--      widget = separators.arrow_right(beautiful.color_lbrown,"alpha"),
+--    },
+--    layout = wibox.layout.fixed.horizontal,
+--  },
+--  buttons = taglist_buttons
+--}
+
+
+--    s.mytasklist = 
+--    awful.widget.tasklist{
+--      screen = s, 
+--      --filter = awful.widget.tasklist.filter.currenttags, 
+--      filter = awful.widget.tasklist.filter.currenttags, 
+--      buttons = awful.util.tasklist_buttons,
+--      layout = {
+--        spacing = 5,
+--        forced_num_cols=2,
+--        forced_num_rows=2,
+--        min_cols_size=7,
+--        min_rows_size=7,
+--      --  expand=true,
+--        layout = wibox.layout.grid.horizontal},
+--        widget_template = {
+--            {
+--                margins = 1,
+--                widget  = wibox.container.margin,
+--            },
+--            id              = 'background_role',
+--            widget          = wibox.container.background,
+--        },
+--  }
+
+
     -- Contain the taglist in a box/rectangle background
-    mytaglistcont = wibox.container.background(s.mytaglist, beautiful.color_lbrown, gears.shape.rectangle)
+   mytaglistcont = wibox.container.background(s.mytaglist, beautiful.color_lbrown, gears.shape.rectangle)
+   -- mytaglistcont = wibox.container.background(s.mytaglist, "alpha", gears.shape.rectangle)
     -- Margin so it's central in y direction on the wibar
-    s.mytag = wibox.container.margin(mytaglistcont, 0,0,3,3)
+    s.mytag = wibox.container.margin(mytaglistcont, 0,0,0,6)
 
     -- Create a tasklist widget
 --    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
@@ -327,10 +440,47 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, awful.util.tasklist_buttons, {
       spacing = 0,
       shape = function(cr, width, height)
-        --gears.shape.powerline (cr, width, height, -10)
-        gears.shape.powerline (cr, width, height, -10)
-      end
+        arrow_depth = height/2
+        local offset = 0
+        
+        -- Avoid going out of the (potential) clip area
+        if arrow_depth < 0 then
+          width  =  width + 2*arrow_depth
+          offset = -arrow_depth
+       end
+        
+        cr:move_to(offset                       , 0        )
+        cr:line_to(offset + width  ,              0        )
+        cr:line_to(offset + width - arrow_depth , height   )
+        cr:line_to(offset + arrow_depth         , height)
+        
+        cr:close_path()
+      end,
     })
+
+--    s.mytasklist = awful.widget.tasklist{
+--      screen = s, 
+--      --filter = awful.widget.tasklist.filter.currenttags, 
+--      filter = awful.widget.tasklist.filter.currenttags, 
+--      buttons = awful.util.tasklist_buttons,
+--      layout = {
+--        spacing = 5,
+--        forced_num_cols=2,
+--        forced_num_rows=2,
+--        min_cols_size=7,
+--        min_rows_size=7,
+--      --  expand=true,
+--        layout = wibox.layout.grid.horizontal},
+--        widget_template = {
+--            {
+--                margins = 1,
+--                widget  = wibox.container.margin,
+--            },
+--            id              = 'background_role',
+--            widget          = wibox.container.background,
+--        },
+--  }
+
 
     -- Create the wibox
     s.mywibox = awful.wibar({ position = "top", screen = s ,height=25, ontop=false , visible=false}
@@ -342,7 +492,7 @@ awful.screen.connect_for_each_screen(function(s)
     bottombar.setBar(s)
     
     -- Need this to make a box around systray - basically sets background colour
-    beautiful.bg_systray = beautiful.color_red,
+    beautiful.bg_systray = beautiful.color_magneta,
 
     -- Add widgets to the wibox
     s.mywibox:setup {
@@ -354,60 +504,111 @@ awful.screen.connect_for_each_screen(function(s)
             --wibox.container.margin(separators.arrow_right("alpha", beautiful.color_lbrown),0,0,3,3),
             -- Taglist has a set background so no need for box around it
             s.mytag,
-            wibox.container.margin(separators.arrow_right(beautiful.color_lbrown,"alpha"), 0,0,3,3),
+--            wibox.container.margin(separators.arrow_right(beautiful.color_lbrown,"alpha"), 0,0,3,3),
+            wibox.container.margin(myseparators.arrow_left(beautiful.color_lbrown,"alpha"), 0,0,0,6),
 
             -- Promptbox
-            wibox.container.margin(separators.arrow_right("alpha", beautiful.color_red),0,0,3,3),
-            wibox.container.margin(s.mypromptbox, 0,0,3,3),
-            wibox.container.margin(separators.arrow_left(beautiful.color_red,"alpha"),0,0,3,3),
+            wibox.container.margin(myseparators.arrow_left("alpha", beautiful.color_red),0,0,6,0),
+            wibox.container.margin(s.mypromptbox, 0,0,6,0),
+            wibox.container.margin(myseparators.arrow_right(beautiful.color_red,"alpha"),0,0,6,0),
         },
-        wibox.container.margin(s.mytasklist,0,0,3,3), -- Middle widget
+        wibox.container.margin(s.mytasklist,0,0,0,6), -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
 
+--            -- Spotify widget - Will still have a small empty "powerline" arrow
+--            -- if spotify is not on
+--            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_violet),0,0,3,3),
+--            wibox.container.margin(wibox.container.background(spotify_widget,beautiful.color_violet),0,0,3,3),
+--            wibox.container.margin(separators.arrow_left(beautiful.color_violet, "alpha"),0,0,3,3),
+--
+--            -- Microphone widget (Try lain one?)
+--            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_cyan),0,0,3,3),
+--            wibox.container.margin(wibox.container.background(mic_widget, beautiful.color_cyan),0,0,3,3),
+--            wibox.container.margin(wibox.container.background(micbar_widget, beautiful.color_cyan),0,0,3,3),
+--            wibox.container.margin(separators.arrow_left(beautiful.color_cyan, "alpha"),0,0,3,3),
+--
+--            -- Volume widget (Try lain one?)
+--            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_blue),0,0,3,3),
+--            wibox.container.margin(wibox.container.background(volume_widget, beautiful.color_blue),0,0,3,3),
+--            wibox.container.margin(wibox.container.background(volumebar_widget, beautiful.color_blue),0,0,3,3),
+--            wibox.container.margin(separators.arrow_left(beautiful.color_blue, "alpha"),0,0,3,3),
+--
+--            -- Brightness widget (Try lain one?)
+--            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_green),0,0,3,3),
+--            wibox.container.margin(wibox.container.background(brightness_widget, beautiful.color_green),0,0,3,3),
+--            wibox.container.margin(separators.arrow_left(beautiful.color_green, "alpha"),0,0,3,3),
+--
+--            -- Battery widget (Not working properly - doesn't update
+--            -- automatically, or often enough)
+--            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_yellow),0,0,3,3),
+--            wibox.container.margin(wibox.container.background(battery_widget, beautiful.color_yellow),0,0,3,3),
+--            wibox.container.margin(separators.arrow_left(beautiful.color_yellow, "alpha"),0,0,3,3),
+--
+--            -- Date/Clock widget, maybe update it to full callendar...
+--            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_orange),0,0,3,3),
+--            wibox.container.margin(wibox.container.background(mytextclock, beautiful.color_orange),0,0,3,3),
+--            wibox.container.margin(separators.arrow_left(beautiful.color_orange, "alpha"),0,0,3,3),
+--
+--            -- Systray widget! 
+--            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_red),0,0,3,3),
+--            wibox.container.margin(wibox.container.background(mail_widget, beautiful.color_red),0,0,3,3),
+--            wibox.container.margin(separators.arrow_left(beautiful.color_red, "alpha"),0,0,3,3),
+--
+--            -- Layout-box widget, displays current WM layout on current tag
+--            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_magneta),0,0,3,3),
+--            wibox.container.margin(wibox.widget.systray(), 0,0,3,3),
+--            wibox.container.margin(wibox.container.background(s.mylayoutbox, beautiful.color_magneta),0,0,3,3),
+
+
+            -- Hopefully-working gentoo updates widget :) 
+--            wibox.container.margin(myseparators.arrow_right("alpha", beautiful.color_violet),0,0,0,6),
+--            wibox.container.margin(wibox.container.background(gentoo_widget,beautiful.color_violet),0,0,0,6),
+--            wibox.container.margin(myseparators.arrow_left(beautiful.color_violet, "alpha"),0,0,0,6),
+
             -- Spotify widget - Will still have a small empty "powerline" arrow
             -- if spotify is not on
-            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_violet),0,0,3,3),
-            wibox.container.margin(wibox.container.background(spotify_widget,beautiful.color_violet),0,0,3,3),
-            wibox.container.margin(separators.arrow_left(beautiful.color_violet, "alpha"),0,0,3,3),
+            wibox.container.margin(myseparators.arrow_right("alpha", beautiful.color_violet),0,0,0,6),
+            wibox.container.margin(wibox.container.background(spotify_widget,beautiful.color_violet),0,0,0,6),
+            wibox.container.margin(myseparators.arrow_left(beautiful.color_violet, "alpha"),0,0,0,6),
 
             -- Microphone widget (Try lain one?)
-            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_cyan),0,0,3,3),
-            wibox.container.margin(wibox.container.background(mic_widget, beautiful.color_cyan),0,0,3,3),
-            wibox.container.margin(wibox.container.background(micbar_widget, beautiful.color_cyan),0,0,3,3),
-            wibox.container.margin(separators.arrow_left(beautiful.color_cyan, "alpha"),0,0,3,3),
+            wibox.container.margin(myseparators.arrow_left("alpha", beautiful.color_cyan),0,0,6,0),
+            wibox.container.margin(wibox.container.background(mic_widget, beautiful.color_cyan),0,0,6,0),
+            wibox.container.margin(wibox.container.background(micbar_widget, beautiful.color_cyan),0,0,6,0),
+            wibox.container.margin(myseparators.arrow_right(beautiful.color_cyan, "alpha"),0,0,6,0),
 
             -- Volume widget (Try lain one?)
-            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_blue),0,0,3,3),
-            wibox.container.margin(wibox.container.background(volume_widget, beautiful.color_blue),0,0,3,3),
-            wibox.container.margin(wibox.container.background(volumebar_widget, beautiful.color_blue),0,0,3,3),
-            wibox.container.margin(separators.arrow_left(beautiful.color_blue, "alpha"),0,0,3,3),
+            wibox.container.margin(myseparators.arrow_right("alpha", beautiful.color_blue),0,0,0,6),
+            wibox.container.margin(wibox.container.background(volume_widget, beautiful.color_blue),0,0,0,6),
+            wibox.container.margin(wibox.container.background(volumebar_widget, beautiful.color_blue),0,0,0,6),
+            wibox.container.margin(myseparators.arrow_left(beautiful.color_blue, "alpha"),0,0,0,6),
 
             -- Brightness widget (Try lain one?)
-            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_green),0,0,3,3),
-            wibox.container.margin(wibox.container.background(brightness_widget, beautiful.color_green),0,0,3,3),
-            wibox.container.margin(separators.arrow_left(beautiful.color_green, "alpha"),0,0,3,3),
+            wibox.container.margin(myseparators.arrow_left("alpha", beautiful.color_green),0,0,6,0),
+            wibox.container.margin(wibox.container.background(brightness_widget, beautiful.color_green),0,0,6,0),
+            wibox.container.margin(myseparators.arrow_right(beautiful.color_green, "alpha"),0,0,6,0),
 
             -- Battery widget (Not working properly - doesn't update
             -- automatically, or often enough)
-            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_yellow),0,0,3,3),
-            wibox.container.margin(wibox.container.background(battery_widget, beautiful.color_yellow),0,0,3,3),
-            wibox.container.margin(separators.arrow_left(beautiful.color_yellow, "alpha"),0,0,3,3),
+            wibox.container.margin(myseparators.arrow_right("alpha", beautiful.color_yellow),0,0,0,6),
+            wibox.container.margin(wibox.container.background(battery_widget, beautiful.color_yellow),0,0,0,6),
+            wibox.container.margin(myseparators.arrow_left(beautiful.color_yellow, "alpha"),0,0,0,6),
 
             -- Date/Clock widget, maybe update it to full callendar...
-            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_orange),0,0,3,3),
-            wibox.container.margin(wibox.container.background(mytextclock, beautiful.color_orange),0,0,3,3),
-            wibox.container.margin(separators.arrow_left(beautiful.color_orange, "alpha"),0,0,3,3),
+            wibox.container.margin(myseparators.arrow_left("alpha", beautiful.color_orange),0,0,6,0),
+            wibox.container.margin(wibox.container.background(mytextclock, beautiful.color_orange),0,0,6,0),
+            wibox.container.margin(myseparators.arrow_right(beautiful.color_orange, "alpha"),0,0,6,0),
 
             -- Systray widget! 
-            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_red),0,0,3,3),
-            wibox.container.margin(wibox.widget.systray(), 0,0,3,3),
-            wibox.container.margin(separators.arrow_left(beautiful.color_red, "alpha"),0,0,3,3),
+            wibox.container.margin(myseparators.arrow_right("alpha", beautiful.color_red),0,0,0,6),
+            wibox.container.margin(wibox.container.background(mail_widget, beautiful.color_red),0,0,0,6),
+            wibox.container.margin(myseparators.arrow_left(beautiful.color_red, "alpha"),0,0,0,6),
 
             -- Layout-box widget, displays current WM layout on current tag
-            wibox.container.margin(separators.arrow_left("alpha", beautiful.color_magneta),0,0,3,3),
-            wibox.container.margin(wibox.container.background(s.mylayoutbox, beautiful.color_magneta),0,0,3,3),
-            --wibox.container.margin(separators.arrow_left(beautiful.color_magneta, "alpha"),0,0,3,3),
+            wibox.container.margin(myseparators.arrow_left("alpha", beautiful.color_magneta),0,0,6,0),
+            wibox.container.margin(wibox.widget.systray(), 0,0,6,0),
+            wibox.container.margin(wibox.container.background(s.mylayoutbox, beautiful.color_magneta),0,0,6,0),
         },
   }
 end)
@@ -527,18 +728,18 @@ globalkeys = gears.table.join(
 
     --    Up the volume
     awful.key({}, "XF86AudioLowerVolume", function ()
-      awful.util.spawn("amixer -q -D pulse sset Master 5%-", false) end,
+      --awful.util.spawn("amixer -q -D pulse sset Master 5%-", false) end,
+      awful.util.spawn("amixer set Master 5%-", false) end,
       {description = "increase the volume", group = "custom"}),
 
     --    Down the volume
     awful.key({}, "XF86AudioRaiseVolume", function ()
-      awful.util.spawn("amixer -q -D pulse sset Master 5%+", false) end,
+      awful.util.spawn("amixer set Master 5%+", false) end,
       {description = "decrease the volume", group = "custom"}),
 
     --    Mute  FLAG : not working yet, either issue with spawn or with key itself?
     awful.key({}, "XF86AudioMute", function ()
-      awful.util.spawn("amixer -D pulse set Master 1+ toggle", false)
-      awful.util.spawn("amixer -D pulse sset Mater toggle", false) 
+      awful.util.spawn("amixer set Master toggle", false)
     end),
 
     --    Next song
@@ -570,17 +771,7 @@ globalkeys = gears.table.join(
     awful.key({}, "XF86MonBrightnessUp", function () awful.spawn("xbacklight -inc 5") end, {description = "increase brightness", group = "custom"}),
     awful.key({}, "XF86MonBrightnessDown", function () awful.spawn("xbacklight -dec 5") end, {description = "decrease brightness", group = "custom"}),
     
-
---    awful.key({modkey}, "w", function()
---      for s in screen do
---        s.mywibox.visible = not s.mywibox.visible
---        if s.mywibox_bottom then
---          s.mywibox_bottom.visible = not s.mywibox_bottom.visible
---        end
---      end
---    end,
---    {description = "toggle all wiboxes", group = "custom"}),
-
+    -- Toggle top wibar
     awful.key({modkey}, "e", function()
       for s in screen do
         s.mywibox.visible = not s.mywibox.visible
@@ -588,6 +779,7 @@ globalkeys = gears.table.join(
     end,
     {description = "toggle top wibox", group = "custom"}),
 
+    -- Toggle bottom wibar
     awful.key({modkey}, "b", function()
       for s in screen do
         if s.mywibox_bottom then

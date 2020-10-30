@@ -63,21 +63,21 @@ function bottomwibar.setBar(s)
     {
       -- Right widgets
       layout = wibox.layout.fixed.horizontal,
-      separators.arrow_left("alpha", beautiful.color_cyan),
+      separators.arrow_right("alpha", beautiful.color_cyan),
       wibox.container.background(ram.widget, beautiful.color_cyan),
       separators.arrow_left(beautiful.color_cyan,"alpha"),
 
       separators.arrow_left("alpha", beautiful.color_red),
       wibox.container.background(cpu.widget, beautiful.color_red),
-      separators.arrow_left(beautiful.color_red,"alpha"),
+      separators.arrow_right(beautiful.color_red,"alpha"),
 
-      separators.arrow_left("alpha", beautiful.color_red),
+      separators.arrow_right("alpha", beautiful.color_red),
       wibox.container.background(cpu1.widget, beautiful.color_red),
       separators.arrow_left(beautiful.color_red,"alpha"),
 
       separators.arrow_left("alpha", beautiful.color_red),
       wibox.container.background(cpu2.widget, beautiful.color_red),
-      separators.arrow_left(beautiful.color_red,"alpha"),
+--      separators.arrow_left(beautiful.color_red,"alpha"),
     },
   }
 
