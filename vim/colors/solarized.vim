@@ -657,9 +657,9 @@ endif
 "exe "hi! SignColumn"     .s:fmt_none   .s:fg_base0
 exe "hi! SignColumn"     .s:fmt_none   .s:fg_blue   .s:bg_base02 .s:sp_violet
 exe "hi! Conceal"        .s:fmt_none   .s:fg_blue   .s:bg_none
-exe "hi! SpellBad"       .s:fmt_curl   .s:fg_blue   .s:bg_red    .s:sp_red
-exe "hi! SpellCap"       .s:fmt_curl   .s:fg_none   .s:bg_none    .s:sp_violet
-exe "hi! SpellRare"      .s:fmt_curl   .s:fg_none   .s:bg_none    .s:sp_cyan
+exe "hi! SpellBad"       .s:fmt_curl   .s:fg_base3    .s:bg_red    .s:sp_red
+exe "hi! SpellCap"       .s:fmt_curl   .s:fg_blue  .s:bg_orange  .s:sp_violet
+exe "hi! SpellRare"      .s:fmt_curl   .s:fg_none   .s:bg_cyan    .s:sp_cyan
 exe "hi! SpellLocal"     .s:fmt_curl   .s:fg_none   .s:bg_none    .s:sp_yellow
 exe "hi! Pmenu"          .s:fmt_none   .s:fg_base0  .s:bg_base02  .s:fmt_revbb
 exe "hi! PmenuSel"       .s:fmt_none   .s:fg_base01 .s:bg_base2   .s:fmt_revbb
