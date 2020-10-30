@@ -68,43 +68,43 @@ export TO_MAILTO='a.sztuc16@imperial.ac.uk'
 #sshfs -C -o reconnect,ServerAliveInterval=16,ServerAliveCountMax=3,workaround=nodelaysrv /home/as16/lx01/ as16@lx01.hep.ph.ic.ac.uk:/vols/build/t2k/as16/mcmc
 
 # TMUX ALIASES
-alias tn = 'tmux new -s'
-alias ta = 'tmux attach -t'
-alias tl = 'tmux ls'
+alias tn='tmux new -s'
+alias ta='tmux attach -t'
+alias tl='tmux ls'
 
 # TERMINAL HELPER ALIASES
-alias whatterm = "ps -o 'cmd=' -p $(ps -o 'ppid=' -p $$)"
-alias e        = "exit"
-alias c        = "clear"
+alias whatterm="ps -o 'cmd=' -p $(ps -o 'ppid=' -p $$)"
+alias e="exit"
+alias c="clear"
 
 # LS ALIASES
-alias ll = 'ls --color=auto -l -h'
-alias la = 'ls --color=auto -l -a -h'
+alias ll='ls --color=auto -l -h'
+alias la='ls --color=auto -l -a -h'
 
 # TASK PRINTING ALIASES
-alias tls  = "printTasks -f ~/WORK/TODO -t ls"
-alias tadd = "printTasks -f ~/WORK/TODO -t add"
-alias trm  = "printTasks -f ~/WORK/TODO -t rm"
+alias tls="printTasks -f ~/WORK/TODO -t ls"
+alias tadd="printTasks -f ~/WORK/TODO -t add"
+alias trm="printTasks -f ~/WORK/TODO -t rm"
 
 # DIRECTORY ALIASES
-alias sk    = 'cd /home/artur/WORK/SuperK'
-alias vpnSK = 'cd /opt/cisco/anyconnect/bin'
-alias hmcmc = 'cd /home/artur/WORK/T2K/HMCMC/DEV'
+alias sk='cd /home/artur/WORK/SuperK'
+alias vpnSK='cd /opt/cisco/anyconnect/bin'
+alias hmcmc='cd /home/artur/WORK/T2K/HMCMC/DEV'
 
 
 # MUTT ALIASES
-alias m  = 'cd ~/.mutt/attachments_UCL && mutt -F ~/.mutt/UCL_muttrc'
-alias mi = 'cd ~/.mutt/attachments && mutt -F ~/.mutt/ICL_muttrc'
-alias mu = 'cd ~/.mutt/attachments_UCL && mutt -F ~/.mutt/UCL_muttrc'
+alias m='cd ~/.mutt/attachments_UCL && mutt -F ~/.mutt/UCL_muttrc'
+alias mi='cd ~/.mutt/attachments && mutt -F ~/.mutt/ICL_muttrc'
+alias mu='cd ~/.mutt/attachments_UCL && mutt -F ~/.mutt/UCL_muttrc'
 
 
 
 # OTHER SOFTWARE ALIASES
-alias zathura       = "zathura --fork"
-alias google-chrome = 'google-chrome-stable'
-alias vimtex        = "vim --servername vim"
-alias im            = 'feh --scale-down --auto-zoom --magick-timeout 1'
-alias battery       = 'cat /sys/class/power_supply/BAT0/capacity'
+alias zathura="zathura --fork"
+alias google-chrome='google-chrome-stable'
+alias vimtex="vim --servername vim"
+alias im='feh --scale-down --auto-zoom --magick-timeout 1'
+alias battery='cat /sys/class/power_supply/BAT0/capacity'
 
 
 
