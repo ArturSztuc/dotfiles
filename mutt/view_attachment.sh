@@ -60,7 +60,7 @@ echo "hi from view attachment"
 echo $@
 
 # the tmp directory to use.
-tmpdir="$HOME/.tmp/mutt_attach"
+tmpdir="$HOME/.mutt/temp"
 
 # the name of the debug file if debugging is turned on.
 debug_file=$tmpdir/debug
@@ -128,7 +128,12 @@ echo $open_with
 echo $newfile
 
 if [ $type = "img" ]; then
-    eog $newfile
+    im $newfile
+    exit 0;
+fi
+
+if [ $type = "jpg" ]; then
+    feh --scale-down --auto-zoom --magick-timeout 1 $newfile
     exit 0;
 fi
 
@@ -138,14 +143,19 @@ if [ $type = "doc" ]; then
 fi
 
 if [ $type = "pdf" ]; then
-    gnome-open $newfile
+    zathura $newfile
+    exit 0;
+fi
+
+if [ $type = "xls" ]; then
+    libreoffice $newfile
     exit 0;
 fi
 
 if [ -z $open_with ]; then
     echo "simple"
-    xdg-open $newfile
+    gnome-open $newfile
 else
     echo "with -a"
-    xdg-open -a "$open_with" $newfile
+    gnome-open -a "$open_with" $newfile
 fi
