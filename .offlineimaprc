@@ -1,0 +1,52 @@
+[general]
+accounts = UCL,Imperial
+pythonfile = ~/.offlineimap.py
+maxsyncaccounts = 2
+
+[Account UCL]
+localrepository = UCL-Local
+remoterepository = UCL-Remote
+autorefresh = 0.5
+quick = 10
+
+[Account Imperial]
+localrepository = Imperial-Local
+remoterepository = Imperial-Remote
+autorefresh = 0.5
+quick = 10
+
+[Repository UCL-Local]
+type = Maildir
+localfolders = /home/artur/mail/UCL
+sep =/
+
+[Repository Imperial-Local]
+type = Maildir
+localfolders = /home/artur/mail/Imperial
+sep =/
+
+[Repository UCL-Remote]
+type = IMAP
+remotehost = outlook.office365.com
+remoteuser = ucapasz@ucl.ac.uk
+remotepasseval = get_pass_ucl()
+remoteport = 993
+realdelete = no
+ssl = yes
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+folderfilter = lambda folder: folder in ['INBOX', 'Drafts', 'Sent Items', 'Deleted Items', 'Junk Email', 'Archive']
+keepalieve = 60
+holdconnectionopen = yes
+
+[Repository Imperial-Remote]
+type = IMAP
+remotehost = outlook.office365.com
+remoteuser = as16@ic.ac.uk
+remotepasseval = get_pass()
+remoteport = 993
+realdelete = no
+ssl = yes
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+folderfilter = lambda folder: folder in ['INBOX', 'T2K/all', 'T2K/oscanal', 'T2K/sk', 'T2K/banff', 'T2K/T2KElog', 'SK/superk', 'SK/superk_uk', 'SK/suketto_user', 'SK/kamioka_user', 'SK/dorm_user', 'SK/egads_plus', 'Drafts', 'Sent Items']
+keepalieve = 60
+holdconnectionopen = yes
