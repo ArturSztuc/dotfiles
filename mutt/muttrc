@@ -1,35 +1,17 @@
 #######################################################
-#                       OWNER                         #
+#                    OWNER OPTIONS                    #
 #######################################################
-set realname  = 'Artur Sztuc'   # default: (empty)
-set from      = a.sztuc16@imperial.ac.uk
-set use_from  = yes
+# Folder hooks
+folder-hook 'account.com.office.ucl' 'source ~/.mutt/account.com.office.ucl'
+folder-hook 'account.com.office.icl' 'source ~/.mutt/account.com.office.icl'
 
-#######################################################
-#                 FOLDER OPTIONS                      #
-#######################################################
-#set folder    = imaps://outlook.office365.com:993/
-set folder    = '~/mail/Imperial/' 
-set spoolfile = '+INBOX'        # default: (empty)
-set record    = '+Sent Items/'  # default: ~/sent
-set postponed = '+Drafts/'      # default: ~/postponed
+# Default account
+source ~/.mutt/account.com.office.ucl
 
-#######################################################
-#        IMAP SETTINGS (RECEIVING MESSAGES)           #
-#######################################################
-mailboxes           =INBOX =T2K =T2K/all =T2K/oscanal =T2K/sk =T2K/banff =T2K/T2KElog =SK =SK/superk =SK/superk_uk =SK/suketto_user =SK/kamioka_user =SK/dorm_user =SK/egads_plus =Drafts ='Sent Items'
-#set imap_keepalive  = 300
-#unset imap_passive
+# Macros for switching accounts
+macro index <f2> '<sync-mailbox><enter-command>source ~/.mutt/account.com.office.ucl<enter><change-folder>!<enter>'
+macro index <f3> '<sync-mailbox><enter-command>source ~/.mutt/account.com.office.icl<enter><change-folder>!<enter>'
 
-#######################################################
-#         SMTP SETTINGS (SENDING MESSAGES)            #
-#######################################################
-source "gpg -d ~/.pswd.gpg |"
-set imap_user       = as16@ic.ac.uk # default: (empty)
-set smtp_pass=$my_icl_pwd
-set smtp_url  = smtp://$imap_user@smtp.office365.com:587 # default: (empty)
-#set smtp_url  = smtp://$imap_user@103.224.212.250:587 # default: (empty)
-set smtp_authenticators="login"
 #######################################################
 #                    SSL OPTIONS                      #
 #######################################################
@@ -81,12 +63,14 @@ set mail_check      = 60      # default: 5
 set beep_new        = yes     # default: no
 set edit_headers    = yes     # default: no
 set forward_quote   = yes     # default: no
-set header_cache    = '~/.cache/mutt'
-set message_cachedir= "~/.mutt/cache"
+# These are now per account
+#set header_cache    = '~/.cache/mutt'
+#set message_cachedir= "~/.mutt/cache"
 set mailcap_path 	  = "~/.mutt/mailcap"
 auto_view text/html
+#alternative_order text/plain text/html
 set print_command="muttprint"
-set sendmail="~/.mutt/attach_check.zsh"   # check for missed attachments
+set sendmail="~/.mutt/attach_check.sh"   # check for missed attachments
 
 #######################################################
 #                    LOCAL FILES                      #
@@ -105,24 +89,6 @@ set history_file    = '~/.mutt/mutthistory'   # default: ~/.mutthistory
 #set use_domain         = no    # default: yes
 
 #######################################################
-#                       COLOURS                       #
-#######################################################
-#color attachment   brightmagenta  default
-#color error        brightred      default
-#color hdrdefault   red            default
-#color indicator    black          red
-#color markers      brightcyan     default
-#color message      brightcyan     default
-#color normal       default        default
-#color quoted       brightblue     default
-#color search       default        green
-#color signature    red            default
-#color status       black          blue
-#color tilde        magenta        default
-#color tree         magenta        default
-source ~/.mutt/colours
-
-#######################################################
 #                     KEY BINDINGS                    #
 #######################################################
 bind index,pager \CP sidebar-prev   # Ctrl-Shift-P  - Previous Mailbox
@@ -130,3 +96,6 @@ bind index,pager \CN sidebar-next   # Ctrl-Shift-N  - Next Mailbox
 bind index,pager \CO sidebar-open   # Ctrl-Shift-O  - Open Highlighted Mailbox
 bind index - collapse-thread        # -             - Collapse/open selected thread
 bind index _ collapse-all           # _             - Collapse/open all threads
+
+# Set the colours!
+source ~/.mutt/colours
