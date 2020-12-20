@@ -95,8 +95,12 @@ fi
 
 # if the type is empty then try to figure it out.
 if [ -z $type ]; then
+  if [ ${filename} = ${filename##*.} ]; then
     file  $1
     type=`file -bi $1 | cut -d"/" -f2`
+  else
+    type=${filename##*.}
+  fi
 fi
 
 # if the type is '-' then we don't want to mess with type.
@@ -134,6 +138,11 @@ fi
 
 if [ $type = "jpg" ]; then
     feh --scale-down --auto-zoom --magick-timeout 1 $newfile
+    exit 0;
+fi
+
+if [ $type = "root" ]; then
+    root -b $newfile
     exit 0;
 fi
 

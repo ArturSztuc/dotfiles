@@ -12,11 +12,7 @@ image/*;                  ~/.mutt/view_attachment.sh %s jpg
 #####################################
 #              PDF                  #
 #####################################
-application/pdf;          ~/.mutt/view_attachment.sh %s pdf
-application/octetstream;          ~/.mutt/view_attachment.sh %s pdf
-application/octet-stream;          ~/.mutt/view_attachment.sh %s pdf
-application/octetstrea;          ~/.mutt/view_attachment.sh %s pdf
-
+application/octet*;          ~/.mutt/view_attachment.sh %s
 
 #####################################
 #             EXCEL                 #
