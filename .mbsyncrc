@@ -1,0 +1,50 @@
+################################
+# UCL mailbox test
+################################
+
+IMAPAccount UCL
+Host outlook.office365.com
+User ucapasz@ucl.ac.uk
+PassCmd "python -c 'import getpswd; print(getpswd.get_pass_ucl())'"
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore UCL-remote
+Account UCL
+
+MaildirStore UCL-local
+SubFolders Verbatim
+Path ~/.mail/UCL/
+Inbox ~/.mail/UCL/INBOX
+
+Channel UCL
+Master :UCL-remote:
+Slave :UCL-local:
+Patterns *
+Create Both
+SyncState *
+
+################################
+# Imperial mailbox test
+################################
+IMAPAccount Imperial 
+Host outlook.office365.com
+User as16@ic.ac.uk
+PassCmd "python -c 'import getpswd; print(getpswd.get_pass_imperial())'"
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+IMAPStore Imperial-remote
+Account Imperial
+
+MaildirStore Imperial-local
+SubFolders Verbatim
+Path ~/.mail/Imperial/
+Inbox ~/.mail/Imperial/INBOX
+
+Channel Imperial
+Master :Imperial-remote:
+Slave :Imperial-local:
+Patterns *
+Create Both
+SyncState *
